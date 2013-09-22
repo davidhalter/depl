@@ -13,10 +13,9 @@ __AUTHOR_EMAIL__ = 'davidhalter88@gmail.com'
 readme = open('README.rst').read() + '\n\n' + open('CHANGELOG.rst').read()
 
 import depl
-VERSION = '.'.join(str(x) for x in depl.__version__)
 
 setup(name='depl',
-      version=VERSION,
+      version=depl.__version__,
       description='depl - deploy easy and fast.',
       author=__AUTHOR__,
       author_email=__AUTHOR_EMAIL__,
@@ -37,7 +36,6 @@ setup(name='depl',
           'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 2.6',
           'Programming Language :: Python :: 2.7',
-          # eed python 3 support
           #'Programming Language :: Python :: 3',
           #'Programming Language :: Python :: 3.2',
           #'Programming Language :: Python :: 3.3',
