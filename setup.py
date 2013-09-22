@@ -15,7 +15,7 @@ readme = open('README.rst').read() + '\n\n' + open('CHANGELOG.rst').read()
 import depl
 VERSION = '.'.join(str(x) for x in depl.__version__)
 
-setup(name='jedi',
+setup(name='depl',
       version=VERSION,
       description='depl - Deployment made easy.',
       author=__AUTHOR__,
@@ -24,7 +24,7 @@ setup(name='jedi',
       maintainer_email=__AUTHOR_EMAIL__,
       url='https://github.com/davidhalter/depl',
       license='MIT',
-      keywords='python deployment',
+      keywords='python deployment fabric',
       long_description=readme,
       packages=['depl'],
       platforms=['any'],
