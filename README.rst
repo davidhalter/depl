@@ -26,6 +26,8 @@ Current supports Ubuntu/Debian (apt-get), others:
 - Fedora/CentOS/RHEL (rpm) could be implemented
 - Windows/Apple: Discussions needed (but probably not?!).
 
+Python 3 support will be ready once fabric_ supports Python 3.
+
 
 Additional Ideas
 ----------------
@@ -33,3 +35,4 @@ Additional Ideas
 - Add support for automatic travis conversions.
 
 .. _article: http://jedidjah.ch
+.. _fabric: https://github.com/fabric/fabric
