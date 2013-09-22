@@ -27,6 +27,9 @@ setup(name='depl',
       long_description=readme,
       packages=['depl'],
       platforms=['any'],
+      entry_points={
+          'console_scripts': ['depl = depl:main']
+      },
       classifiers=[
           'Development Status :: 1 - Planning',
           'Environment :: Plugins',
