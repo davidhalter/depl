@@ -17,7 +17,7 @@ VERSION = '.'.join(str(x) for x in depl.__version__)
 
 setup(name='depl',
       version=VERSION,
-      description='depl - Deployment made easy.',
+      description='depl - deploy easy and fast.',
       author=__AUTHOR__,
       author_email=__AUTHOR_EMAIL__,
       maintainer=__AUTHOR__,
