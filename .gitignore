@@ -9,5 +9,4 @@
 /build/
 /docs/_build/
 /dist/
-jedi.egg-info/
-record.json
+depl.egg-info/
