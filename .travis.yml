@@ -2,13 +2,11 @@ language: python
 env:
     - TOXENV=py26
     - TOXENV=py27
-    - TOXENV=pypy
     - TOXENV=cov
 matrix:
     allow_failures:
         - env: TOXENV=cov
         - env: TOXENV=sith
-        - env: TOXENV=pypy
 install:
     - pip install --quiet --use-mirrors tox
 script:
