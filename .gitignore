@@ -10,4 +10,4 @@
 /docs/_build/
 /dist/
 depl.egg-info/
-venv
+.venv

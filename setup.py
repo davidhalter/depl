@@ -30,6 +30,7 @@ setup(name='depl',
       entry_points={
           'console_scripts': ['depl = depl:main']
       },
+      install_requires=open('requirements.txt').readlines(),
       classifiers=[
           'Development Status :: 1 - Planning',
           'Environment :: Plugins',
