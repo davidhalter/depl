@@ -12,16 +12,26 @@ Options:
   -c, --config=<file>   Deploy configuration file [default: .depl.yml]
 """
 
+import sys
+
 import docopt
-from config import Config
+
+import config
 
 __version__ = '0.0.1'
 
 
 def main():
     args = docopt.docopt(__doc__, version=__version__)
-    c = Config(args['--config'], args['<host>'])
+    try:
+        c = config.Config(args['--config'], args['<host>'])
+    except IOError:
+        sys.stderr.write("Couldn't find config file.")
+        sys.exit(1)
+    except config.ValidationError:
+        sys.stderr.write("Config file is invalid.")
+        sys.exit(2)
     if args['deploy']:
         pass
     elif args['run']:
-        run('depl run ')
+        run('depl run')
