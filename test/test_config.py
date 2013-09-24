@@ -210,3 +210,24 @@ def test_pool_param(tmpdir):
     assert len(validate(tmpdir, s, pool='foo').pools()) == 1
     with pytest.raises(KeyError):
         validate(tmpdir, s, pool='not_existing').pools()
+
+def test_pool_hosts_param(tmpdir):
+    s = """
+    deploy:
+      - &web django
+      - &redis redis
+    server:
+      - &server1 foo@bar
+      - other
+    pool:
+      foo:
+        server: [*server1]
+        deploy: [*web]
+      bar:
+        server: [*server1]
+        deploy: [*redis]
+    """
+    assert len(validate(tmpdir, s).pools()) == 2
+    pool = validate(tmpdir, s, hosts=['baz'], pool='foo').pools()[0]
+    assert pool.name == 'foo'
+    assert [s.identifier for s in pool.servers] == ['baz']
