@@ -181,3 +181,10 @@ def test_hosts_param(tmpdir):
       - &web django
     """
     assert servers_to_str(tmpdir, s, ['foo@bar']) == ['foo@bar']
+    s = """
+    deploy:
+      - &web django
+    server:
+      - foo@baz
+    """
+    assert servers_to_str(tmpdir, s, ['foo@bar']) == ['foo@bar']
