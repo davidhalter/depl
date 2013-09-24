@@ -15,6 +15,7 @@ Options:
 import sys
 
 import docopt
+from fabric.api import run
 
 import config
 

@@ -18,7 +18,7 @@ class Config(object):
 
     def _validate(self):
         if not isinstance(self._cnf, dict):
-            ValidationError('Should be a dict')
+            raise ValidationError('Should be a dict')
 
         with open(os.path.join(os.path.dirname(__file__), 'grammar.yml')) as f:
             grammar = yaml.load(f)
@@ -27,7 +27,7 @@ class Config(object):
                 raise ValidationError('"%s" is an unkown configuration option'
                                         % key)
 
-            setattr(self, key, self._validate_detail(value, self._cnf[key]))
+            setattr(self, key, self._validate_detail(value, grammar[key]))
 
     def _validate_detail(self, current, grammar):
         result = current
@@ -59,8 +59,8 @@ class Config(object):
                     raise ValidationError('List not expected in list %s' % element)
                 else:
                     if element not in list_dict:
-                        raise ValidationError('Element %s not found in grammar'
-                                              % key)
+                        raise ValidationError('Element %s not found in grammar (%s)'
+                                              % (element, list_dict))
                     result.append(element)
         elif isinstance(current, dict):
             if not isinstance(grammar, dict):
