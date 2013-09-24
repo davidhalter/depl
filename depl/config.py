@@ -45,7 +45,6 @@ class Config(object):
                     list_dict[item] = None
 
             result = []
-            print list_dict
             is_playeholder = len(list_dict) == 1 and key[0] == '<' and key[-1] == '>'
             # <something> denotes a placeholder (anything)
 
@@ -65,7 +64,7 @@ class Config(object):
                 elif isinstance(element, list):
                     raise ValidationError('List not expected in list %s' % element)
                 else:
-                    if element not in list_dict:
+                    if element not in list_dict and not is_playeholder:
                         raise ValidationError('Element %s not found in grammar (%s)'
                                               % (element, list_dict))
                     result.append(element)

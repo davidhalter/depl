@@ -99,6 +99,15 @@ def test_server(tmpdir):
           password: password
     """
     validate(tmpdir, s, False)
+    s = """
+    deploy:
+      - django
+    server:
+      - foo@bar:22:
+          password: password
+      - example.com
+    """
+    validate(tmpdir, s, False)
 
 
 def test_server_invalid(tmpdir):
@@ -109,5 +118,12 @@ def test_server_invalid(tmpdir):
       - foo@bar:
           password: password
           wrong_option: foo
+    """
+    validate(tmpdir, s, True)
+    s = """
+    deploy:
+      - django
+    server:
+      server_not_in_list
     """
     validate(tmpdir, s, True)
