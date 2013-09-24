@@ -21,23 +21,6 @@ def test_not_existing(tmpdir):
         config.Config(p, [])
 
 
-def test_simple_valid(tmpdir):
-    s = """
-    deploy:
-      - django
-      - redis
-    """
-    validate(tmpdir, s, False)
-
-    s = """
-    deploy:
-      - django:
-          port: 80
-      - redis
-    """
-    validate(tmpdir, s, False)
-
-
 def test_deploy_invalid(tmpdir):
     s = """
     - deploy:
@@ -85,6 +68,21 @@ def test_deploy_invalid(tmpdir):
 
 
 def test_deploy_valid(tmpdir):
+    s = """
+    deploy:
+      - django
+      - redis
+    """
+    validate(tmpdir, s, False)
+
+    s = """
+    deploy:
+      - django:
+          port: 80
+      - redis
+    """
+    validate(tmpdir, s, False)
+
     s = """
     deploy:
       - redis
