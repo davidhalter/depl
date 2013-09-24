@@ -5,15 +5,18 @@ import pytest
 from depl import config
 
 
-def validate(tmpdir, code, fail):
+def validate(tmpdir, code, fail=False, hosts=()):
     p = tmpdir.join("default.yml")
     p.write(textwrap.dedent(code))
     if fail:
         with pytest.raises(config.ValidationError):
-            config.Config(str(p), [])
+            config.Config(str(p), hosts)
     else:
-        return config.Config(str(p), [])
+        return config.Config(str(p), hosts)
 
+
+def servers_to_str(tmpdir, yml, hosts=()):
+    return [s.identifier for s in validate(tmpdir, yml, False, hosts).servers()]
 
 def test_not_existing(tmpdir):
     p = str(tmpdir.join("not_existing.yml"))
@@ -95,8 +98,6 @@ def test_deploy_valid(tmpdir):
 
 
 def test_server(tmpdir):
-    def servers_to_str(yml):
-        return [s.identifier for s in validate(tmpdir, yml, False).servers()]
     s = """
     deploy:
       - django
@@ -104,7 +105,7 @@ def test_server(tmpdir):
       - foo@bar:22:
           password: password
     """
-    assert servers_to_str(s) == ['foo@bar:22']
+    assert servers_to_str(tmpdir, s) == ['foo@bar:22']
     s = """
     deploy:
       - django
@@ -113,7 +114,7 @@ def test_server(tmpdir):
           password: password
       - example.com
     """
-    assert servers_to_str(s) == ['foo@bar:22', 'example.com']
+    assert servers_to_str(tmpdir, s) == ['foo@bar:22', 'example.com']
 
 
 def test_server_invalid(tmpdir):
@@ -172,3 +173,11 @@ def test_pool_invalid(tmpdir):
         unknown_option: haha
     """
     validate(tmpdir, s, True)
+
+
+def test_hosts_param(tmpdir):
+    s = """
+    deploy:
+      - &web django
+    """
+    assert servers_to_str(tmpdir, s, ['foo@bar']) == ['foo@bar']
