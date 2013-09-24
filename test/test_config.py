@@ -146,7 +146,10 @@ def test_pool(tmpdir):
         server: [*server1]
         deploy: [*web]
     """
-    validate(tmpdir, s, False)
+    pools = validate(tmpdir, s, False).pools()
+    assert len(pools) == 1
+    assert len(pools[0].servers) == 1
+    assert len(pools[0].deploys) == 1
 
 
 def test_pool_invalid(tmpdir):
