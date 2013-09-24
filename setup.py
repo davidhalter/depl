@@ -12,10 +12,8 @@ __AUTHOR_EMAIL__ = 'davidhalter88@gmail.com'
 
 readme = open('README.rst').read() + '\n\n' + open('CHANGELOG.rst').read()
 
-import depl
-
 setup(name='depl',
-      version=depl.__version__,
+      version='0.0.1', # Cannot import the version because of dependencies.
       description='depl - deploy easy and fast.',
       author=__AUTHOR__,
       author_email=__AUTHOR_EMAIL__,
