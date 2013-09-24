@@ -110,4 +110,4 @@ def test_server_invalid(tmpdir):
           password: password
           wrong_option: foo
     """
-    validate(tmpdir, s, False)
+    validate(tmpdir, s, True)

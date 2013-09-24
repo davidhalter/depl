@@ -41,19 +41,26 @@ class Config(object):
                     key, value = item.items()[0]
                     list_dict[key] = value
                 else:
+                    key = item
                     list_dict[item] = None
 
             result = []
+            print list_dict
+            is_playeholder = len(list_dict) == 1 and key[0] == '<' and key[-1] == '>'
+            # <something> denotes a placeholder (anything)
+
             for element in current:
                 if isinstance(element, dict):
                     if len(element) != 1:
                         raise ValidationError('Dictionary directly in list, %s'
                                               % element)
                     key, value = element.items()[0]
-                    if key not in list_dict:
+                    if key not in list_dict and not is_playeholder:
                         raise ValidationError('Key %s not found in grammar'
                                               % key)
-                    el = self._validate_detail(value, list_dict[key])
+                    gram = list_dict.values()[0] if is_playeholder \
+                            else list_dict[key]
+                    el = self._validate_detail(value, gram)
                     result.append(el)
                 elif isinstance(element, list):
                     raise ValidationError('List not expected in list %s' % element)
