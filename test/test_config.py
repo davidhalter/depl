@@ -234,6 +234,10 @@ def test_pool_hosts_param(tmpdir):
 
 
 def test_hosts_param_with_pool(tmpdir):
+    """
+    No pool param but a host param with pools, should only run on "known" SSH
+    hosts!
+    """
     s = """
     deploy:
       - &web django
@@ -254,10 +258,12 @@ def test_hosts_param_with_pool(tmpdir):
         server: [*server3]
         deploy: [*redis]
     """
+    # other is not being used in pools
     pools = validate(tmpdir, s, hosts=['other']).pools()
     for pool in pools:
         assert pool.servers == []
 
+    # foo@bar is being used in foo/bar
     pools = validate(tmpdir, s, hosts=['foo@bar']).pools()
     for pool in pools:
         if pool.name == 'baz':
