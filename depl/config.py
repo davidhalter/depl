@@ -75,13 +75,17 @@ class Config(object):
                     result.append(element)
         elif isinstance(current, dict):
             if not isinstance(grammar, dict):
-                raise ValidationError("Expected a non-dictionary in %s" % current)
+                raise ValidationError("Expected a dictionary in %s" % current)
 
+            is_playeholder = len(grammar) == 1 and grammar.keys()[0][0] == '<' \
+                             and grammar.keys()[0][-1] == '>'
             result = {}
             for key, value in current.items():
-                if key not in grammar:
+                if key not in grammar and not is_playeholder:
                     raise ValidationError("Key %s is not in grammar." % key)
-                result[key] = self._validate_detail(value, grammar[key])
+
+                gram = grammar.values()[0] if is_playeholder else grammar[key]
+                result[key] = self._validate_detail(value, gram)
         else:
             # normal type
             if type(grammar) != type(current):
