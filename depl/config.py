@@ -108,14 +108,18 @@ class Config(object):
                 yield Deploy(deploy)
 
     def pools(self):
+        result = []
         for name, pool in self._pool.items():
-            if self._pool_option is not None and self._pool != pool:
+            if self._pool_option is not None and self._pool_option != name:
                 continue
-            yield Pool(name, self._servers(pool['server']),
-                             self._deploys(pool['deploy']))
+            result.append(Pool(name, self._servers(pool['server']),
+                                     self._deploys(pool['deploy'])))
+        if self._pool_option and not result:
+            raise KeyError("Didn't find the pool '%s'." % self._pool_option)
         if not self._pool:
             # Create a default pool, if there's none.
-            yield Pool(None, self._servers(), self._deploys())
+            result.append(Pool(None, self._servers(), self._deploys()))
+        return result
 
 
 class Server(object):
@@ -133,5 +137,5 @@ class Deploy(object):
 class Pool(object):
     def __init__(self, name, servers, deploys):
         self.name = name
-        self.servers = servers
-        self.deploys = deploys
+        self.servers = list(servers)
+        self.deploys = list(deploys)
