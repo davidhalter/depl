@@ -28,8 +28,8 @@ def main():
     except IOError:
         sys.stderr.write("Couldn't find config file.")
         sys.exit(1)
-    except config.ValidationError:
-        sys.stderr.write("Config file is invalid.")
+    except config.ValidationError as e:
+        sys.stderr.write("Config file is invalid: " + e.message)
         sys.exit(2)
     if args['deploy']:
         pass
