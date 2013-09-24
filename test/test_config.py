@@ -133,3 +133,32 @@ def test_server_invalid(tmpdir):
       server_not_in_list
     """
     validate(tmpdir, s, True)
+
+
+def test_pool(tmpdir):
+    s = """
+    deploy:
+      - &web django
+    server:
+      - &server1 foo@bar
+    pool:
+      foo:
+        server: [*server1]
+        deploy: [*web]
+    """
+    validate(tmpdir, s, False)
+
+
+def test_pool_invalid(tmpdir):
+    s = """
+    deploy:
+      - &web django
+    server:
+      - &server1 foo@bar
+    pool:
+      foo:
+        server: [*server1]
+        deploy: [*web]
+        unknown_option: haha
+    """
+    validate(tmpdir, s, True)

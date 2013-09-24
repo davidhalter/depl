@@ -4,6 +4,8 @@ deploy:
         port: 80
     - redis: {}
     - postgresql: {}
+
 server:
     - &host <user@example:port>:
         password: password
+
