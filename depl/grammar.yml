@@ -1,11 +1,15 @@
 deploy:
-    - django:
+    - &django django:
         url: 127.0.0.1
         port: 80
-    - redis: {}
-    - postgresql: {}
+    - &redis redis: {}
+    - &pg postgresql: {}
 
 server:
     - &host <user@example:port>:
         password: password
 
+pool:
+    <name>:
+        server: [*host]
+        deploy: [*django, *redis, *pg]
