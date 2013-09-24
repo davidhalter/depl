@@ -92,14 +92,14 @@ class Config(object):
                                       % (grammar, current))
         return result
 
-    def servers(self, raw=None):
+    def _servers(self, raw=None):
         for server in self._hosts or raw or self._server:
             if isinstance(server, tuple):
                 yield Server(*server)
             else:
                 yield Server(server)
 
-    def deploys(self, raw=None):
+    def _deploys(self, raw=None):
         for deploy in raw or self._deploy:
             if isinstance(deploy, tuple):
                 yield Deploy(*deploy)
@@ -108,11 +108,11 @@ class Config(object):
 
     def pools(self):
         for name, pool in self._pool.items():
-            yield Pool(name, self.servers(pool['server']),
-                             self.deploys(pool['deploy']))
+            yield Pool(name, self._servers(pool['server']),
+                             self._deploys(pool['deploy']))
         if not self._pool:
             # Create a default pool, if there's none.
-            yield Pool(None, self.servers(), self.deploys())
+            yield Pool(None, self._servers(), self._deploys())
 
 
 class Server(object):

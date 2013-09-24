@@ -16,7 +16,7 @@ def validate(tmpdir, code, fail=False, hosts=()):
 
 
 def servers_to_str(tmpdir, yml, hosts=()):
-    return [s.identifier for s in validate(tmpdir, yml, False, hosts).servers()]
+    return [s.identifier for s in validate(tmpdir, yml, False, hosts)._servers()]
 
 def test_not_existing(tmpdir):
     p = str(tmpdir.join("not_existing.yml"))
@@ -72,7 +72,7 @@ def test_deploy_invalid(tmpdir):
 
 def test_deploy_valid(tmpdir):
     def deploys_to_str(yml):
-        return [s.name for s in validate(tmpdir, yml, False).deploys()]
+        return [s.name for s in validate(tmpdir, yml, False)._deploys()]
 
     s = """
     deploy:
