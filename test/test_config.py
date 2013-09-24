@@ -149,13 +149,13 @@ def test_pool(tmpdir):
         server: [*server1]
         deploy: [*web]
     """
-    pools = list(validate(tmpdir, s, False).pools())
+    pools = validate(tmpdir, s, False).pools()
     assert len(pools) == 1
 
-    servers = list(pools[0].servers)
+    servers = pools[0].servers
     assert len(servers) == 1
     assert servers[0].identifier == 'foo@bar'
-    deploys = list(pools[0].deploys)
+    deploys = pools[0].deploys
     assert len(deploys) == 1
     assert deploys[0].name == 'django'
 
@@ -206,7 +206,7 @@ def test_pool_param(tmpdir):
         server: [*server1]
         deploy: [*redis]
     """
-    assert len(list(validate(tmpdir, s).pools())) == 2
-    assert len(list(validate(tmpdir, s, pool='foo').pools())) == 1
+    assert len(validate(tmpdir, s).pools()) == 2
+    assert len(validate(tmpdir, s, pool='foo').pools()) == 1
     with pytest.raises(KeyError):
         validate(tmpdir, s, pool='not_existing').pools()
