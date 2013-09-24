@@ -139,17 +139,24 @@ def test_pool(tmpdir):
     s = """
     deploy:
       - &web django
+      - redis
     server:
       - &server1 foo@bar
+      - other
     pool:
       foo:
         server: [*server1]
         deploy: [*web]
     """
-    pools = validate(tmpdir, s, False).pools()
+    pools = list(validate(tmpdir, s, False).pools())
     assert len(pools) == 1
-    assert len(pools[0].servers) == 1
-    assert len(pools[0].deploys) == 1
+
+    servers = list(pools[0].servers)
+    assert len(servers) == 1
+    assert servers[0].identifier == 'foo@bar'
+    deploys = list(pools[0].deploys)
+    assert len(deploys) == 1
+    assert deploys[0].name == 'django'
 
 
 def test_pool_invalid(tmpdir):

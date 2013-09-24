@@ -93,19 +93,24 @@ class Config(object):
                                       % (grammar, current))
         return result
 
-    def servers(self):
-        for server in self._hosts or self._server:
+    def servers(self, raw=None):
+        for server in self._hosts or raw or self._server:
             if isinstance(server, tuple):
                 yield Server(*server)
             else:
                 yield Server(server)
 
-    def deploys(self):
-        for deploy in self._deploy:
+    def deploys(self, raw=None):
+        for deploy in raw or self._deploy:
             if isinstance(deploy, tuple):
                 yield Deploy(*deploy)
             else:
                 yield Deploy(deploy)
+
+    def pools(self):
+        for name, pool in self._pool.items():
+            yield Pool(name, self.servers(pool['server']),
+                             self.deploys(pool['deploy']))
 
 
 class Server(object):
@@ -118,3 +123,10 @@ class Deploy(object):
     def __init__(self, name, settings=None):
         self.name = name
         self.settings = settings or {}
+
+
+class Pool(object):
+    def __init__(self, name, servers, deploys):
+        self.name = name
+        self.servers = servers
+        self.deploys = deploys
