@@ -1,6 +1,23 @@
 depl - deploy easy and fast.
 ============================
 
+.. image:: https://secure.travis-ci.org/davidhalter/depl.png?branch=master
+    :target: http://travis-ci.org/davidhalter/depl
+    :alt: Travis-CI build status
+
+.. image:: https://coveralls.io/repos/davidhalter/depl/badge.png?branch=master
+    :target: https://coveralls.io/r/davidhalter/depl
+    :alt: Coverage Status
+
+.. image:: https://pypip.in/d/depl/badge.png
+    :target: https://crate.io/packages/depl/
+    :alt: Number of PyPI downloads
+
+.. image:: https://pypip.in/v/depl/badge.png
+    :target: https://crate.io/packages/depl/
+    :alt: Latest PyPI version
+
+
 **Please don't use this yet, it's in a planning phase.** Pretty soon I'm going
 to start a discussion about it. Everything here is incomplete. The only reason
 I'm already deploying is that I'm trying to prepare myself for a major
