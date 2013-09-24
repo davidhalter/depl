@@ -88,3 +88,26 @@ def test_deploy_valid(tmpdir):
       - redis
     """
     validate(tmpdir, s, False)
+
+
+def test_server(tmpdir):
+    s = """
+    deploy:
+      - django
+    server:
+      - foo@bar:22:
+          password: password
+    """
+    validate(tmpdir, s, False)
+
+
+def test_server_invalid(tmpdir):
+    s = """
+    deploy:
+      - django
+    server:
+      - foo@bar:
+          password: password
+          wrong_option: foo
+    """
+    validate(tmpdir, s, False)
