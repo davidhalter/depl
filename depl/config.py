@@ -1,5 +1,4 @@
 import os
-import getpass
 
 import yaml
 
