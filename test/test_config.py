@@ -5,14 +5,14 @@ import pytest
 from depl import config
 
 
-def validate(tmpdir, code, fail=False, hosts=()):
+def validate(tmpdir, code, fail=False, hosts=(), pool=None):
     p = tmpdir.join("default.yml")
     p.write(textwrap.dedent(code))
     if fail:
         with pytest.raises(config.ValidationError):
-            config.Config(str(p), hosts)
+            config.Config(str(p), hosts, pool)
     else:
-        return config.Config(str(p), hosts)
+        return config.Config(str(p), hosts, pool)
 
 
 def servers_to_str(tmpdir, yml, hosts=()):
@@ -188,3 +188,25 @@ def test_hosts_param(tmpdir):
       - foo@baz
     """
     assert servers_to_str(tmpdir, s, ['foo@bar']) == ['foo@bar']
+
+
+def test_pool_param(tmpdir):
+    s = """
+    deploy:
+      - &web django
+      - &redis redis
+    server:
+      - &server1 foo@bar
+      - other
+    pool:
+      foo:
+        server: [*server1]
+        deploy: [*web]
+      bar:
+        server: [*server1]
+        deploy: [*redis]
+    """
+    assert len(list(validate(tmpdir, s).pools())) == 2
+    assert len(list(validate(tmpdir, s, pool='foo').pools())) == 1
+    with pytest.raises(KeyError):
+        validate(tmpdir, s, pool='not_existing').pools()

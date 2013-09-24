@@ -8,8 +8,9 @@ class ValidationError(Exception):
 
 
 class Config(object):
-    def __init__(self, path, hosts=[]):
+    def __init__(self, path, hosts=(), pool=None):
         self._hosts = hosts
+        self._pool_option = pool
 
         with open(path) as f:
             content = f.read()
@@ -108,6 +109,8 @@ class Config(object):
 
     def pools(self):
         for name, pool in self._pool.items():
+            if self._pool_option is not None and self._pool != pool:
+                continue
             yield Pool(name, self._servers(pool['server']),
                              self._deploys(pool['deploy']))
         if not self._pool:
