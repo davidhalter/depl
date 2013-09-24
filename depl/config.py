@@ -93,15 +93,19 @@ class Config(object):
                                       % (grammar, current))
         return result
 
-    def _servers(self, raw=None):
-        for server in self._hosts or raw or self._server:
+    def _servers(self, pool=None):
+        if pool and self._hosts and self._pool and not self._pool_option:
+            new = [h for h in self._hosts if h in pool]
+        else:
+            new = self._hosts or pool or self._server
+        for server in new:
             if isinstance(server, tuple):
                 yield Server(*server)
             else:
                 yield Server(server)
 
-    def _deploys(self, raw=None):
-        for deploy in raw or self._deploy:
+    def _deploys(self, pool=None):
+        for deploy in pool or self._deploy:
             if isinstance(deploy, tuple):
                 yield Deploy(*deploy)
             else:
