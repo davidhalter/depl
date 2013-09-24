@@ -30,6 +30,7 @@ setup(name='depl',
       entry_points={
           'console_scripts': ['depl = depl:main']
       },
+      package_data={'depl': ['grammar.yml']},
       install_requires=open('requirements.txt').readlines(),
       classifiers=[
           'Development Status :: 1 - Planning',

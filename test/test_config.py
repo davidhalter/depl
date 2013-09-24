@@ -27,13 +27,40 @@ def test_simple_valid(tmpdir):
       - django
       - reddis
     """
-    validate(tmpdir, s, 1)
+    validate(tmpdir, s, True)
 
 
-def test_simple_invalid(tmpdir):
+def test_deploy_invalid(tmpdir):
     s = """
     deploy:
       django
       reddis
     """
-    validate(tmpdir, s, 1)
+    validate(tmpdir, s, True)
+
+    s = """
+    deploy:
+      - django
+      - reddis:
+          not_existing_option: 3
+    """
+    validate(tmpdir, s, True)
+    s = """
+    deploy:
+      - django:
+        dict_in_the_wrong_place: 4
+    """
+    validate(tmpdir, s, True)
+    s = """
+    deploy:
+      - not_existing_deploy_line
+    """
+    validate(tmpdir, s, True)
+
+
+def test_deploy_valid(tmpdir):
+    s = """
+    deploy:
+      - redis
+    """
+    validate(tmpdir, s, False)

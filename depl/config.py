@@ -1,3 +1,5 @@
+import os
+
 import yaml
 
 
@@ -18,7 +20,8 @@ class Config(object):
         if not isinstance(self._cnf, dict):
             ValidationError('Should be a dict')
 
-        grammar = yaml.load('grammar.yml')
+        with open(os.path.join(os.path.dirname(__file__), 'grammar.yml')) as f:
+            grammar = yaml.load(f)
         for key, value in self._cnf.items():
             if key not in grammar:
                 raise ValidationError('"%s" is an unkown configuration option'
@@ -55,8 +58,10 @@ class Config(object):
                 elif isinstance(element, list):
                     raise ValidationError('List not expected in list %s' % element)
                 else:
-                    el = self._validate_detail(element, list_dict[key])
-                    result.append(el)
+                    if element not in list_dict:
+                        raise ValidationError('Element %s not found in grammar'
+                                              % key)
+                    result.append(element)
         elif isinstance(current, dict):
             if not isinstance(grammar, dict):
                 raise ValidationError("Expected a non-dictionary in %s" % current)
@@ -68,7 +73,7 @@ class Config(object):
                 result[key] = self._validate_detail(element, grammar[key])
         else:
             # normal type
-            if isinstance(grammar) != isinstance(current):
+            if type(grammar) != type(current):
                 raise ValidationError("Grammar type doesn't match - %s with %s"
                                       % (grammar, current))
         return result
