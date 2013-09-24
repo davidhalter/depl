@@ -110,6 +110,9 @@ class Config(object):
         for name, pool in self._pool.items():
             yield Pool(name, self.servers(pool['server']),
                              self.deploys(pool['deploy']))
+        if not self._pool:
+            # Create a default pool, if there's none.
+            yield Pool(None, self.servers(), self.deploys())
 
 
 class Server(object):
