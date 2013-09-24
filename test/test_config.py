@@ -68,12 +68,15 @@ def test_deploy_invalid(tmpdir):
 
 
 def test_deploy_valid(tmpdir):
+    def deploys_to_str(yml):
+        return [s.name for s in validate(tmpdir, yml, False).deploys()]
+
     s = """
     deploy:
       - django
       - redis
     """
-    validate(tmpdir, s, False)
+    assert deploys_to_str(s) == ['django', 'redis']
 
     s = """
     deploy:
@@ -81,18 +84,19 @@ def test_deploy_valid(tmpdir):
           port: 80
       - redis
     """
+    assert deploys_to_str(s) == ['django', 'redis']
     validate(tmpdir, s, False)
 
     s = """
     deploy:
       - redis
     """
-    validate(tmpdir, s, False)
+    assert deploys_to_str(s) == ['redis']
 
 
 def test_server(tmpdir):
     def servers_to_str(yml):
-        return [str(s) for s in validate(tmpdir, yml, False).servers()]
+        return [s.identifier for s in validate(tmpdir, yml, False).servers()]
     s = """
     deploy:
       - django

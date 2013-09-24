@@ -96,11 +96,21 @@ class Config(object):
             else:
                 yield Server(server)
 
+    def deploys(self):
+        for deploy in self._deploy:
+            if isinstance(deploy, tuple):
+                yield Deploy(*deploy)
+            else:
+                yield Deploy(deploy)
+
 
 class Server(object):
     def __init__(self, identifier, password=None):
         self.identifier = identifier
         self.password = password
 
-    def __str__(self):
-        return self.identifier
+
+class Deploy(object):
+    def __init__(self, name, settings=None):
+        self.name = name
+        self.settings = settings or {}
