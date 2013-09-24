@@ -231,3 +231,36 @@ def test_pool_hosts_param(tmpdir):
     pool = validate(tmpdir, s, hosts=['baz'], pool='foo').pools()[0]
     assert pool.name == 'foo'
     assert [s.identifier for s in pool.servers] == ['baz']
+
+
+def test_hosts_param_with_pool(tmpdir):
+    s = """
+    deploy:
+      - &web django
+      - &redis redis
+    server:
+      - &server1 foo@bar
+      - &server2 second
+      - &server3 third
+      - other
+    pool:
+      foo:
+        server: [*server1]
+        deploy: [*web]
+      bar:
+        server: [*server1, *server2]
+        deploy: [*redis]
+      baz:
+        server: [*server3]
+        deploy: [*redis]
+    """
+    pools = validate(tmpdir, s, hosts=['other']).pools()
+    for pool in pools:
+        assert pool.servers == []
+
+    pools = validate(tmpdir, s, hosts=['foo@bar']).pools()
+    for pool in pools:
+        if pool.name == 'baz':
+            assert pool.servers == []
+        else:
+            assert [s.identifier for s in pool.servers] == ['foo@bar']
