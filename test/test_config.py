@@ -29,6 +29,14 @@ def test_simple_valid(tmpdir):
     """
     validate(tmpdir, s, False)
 
+    s = """
+    deploy:
+      - django:
+          port: 80
+      - redis
+    """
+    validate(tmpdir, s, False)
+
 
 def test_deploy_invalid(tmpdir):
     s = """
@@ -60,6 +68,18 @@ def test_deploy_invalid(tmpdir):
     s = """
     deploy:
       - not_existing_deploy_line
+    """
+    validate(tmpdir, s, True)
+    s = """
+    deploy:
+      - django:
+          port: string instead of int
+    """
+    validate(tmpdir, s, True)
+    s = """
+    deploy:
+      - django:
+          not_existing_django_config: 80
     """
     validate(tmpdir, s, True)
 

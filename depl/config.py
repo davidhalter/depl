@@ -70,7 +70,7 @@ class Config(object):
             for key, value in current.items():
                 if key not in grammar:
                     raise ValidationError("Key %s is not in grammar." % key)
-                result[key] = self._validate_detail(element, grammar[key])
+                result[key] = self._validate_detail(value, grammar[key])
         else:
             # normal type
             if type(grammar) != type(current):
