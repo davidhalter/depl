@@ -4,12 +4,13 @@ Deploying stuff is hard, managing nginx and postgres painful, why not the easy
 way?
 
 Usage:
-  depl deploy [-c=<file>] [<host>...]
-  depl run [-c=<file>] <command> [<host>...]
+  depl deploy [-c=<file>] [-p=<file>] [<host>...]
+  depl run [-c=<file>] [-p=<file>] <command> [<host>...]
   depl -h | --help
 
 Options:
   -c, --config=<file>   Deploy configuration file [default: .depl.yml]
+  -p, --pool=<name>     Define a pool that is going to be deployed.
 """
 
 import sys
@@ -25,7 +26,7 @@ __version__ = '0.0.1'
 def main():
     args = docopt.docopt(__doc__, version=__version__)
     try:
-        c = config.Config(args['--config'], args['<host>'])
+        c = config.Config(args['--config'], args['<host>'], args['--pool'])
     except IOError:
         sys.stderr.write("Couldn't find config file.")
         sys.exit(1)
