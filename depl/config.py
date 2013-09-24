@@ -1,4 +1,5 @@
 import os
+import getpass
 
 import yaml
 
@@ -8,11 +9,14 @@ class ValidationError(Exception):
 
 
 class Config(object):
-    def __init__(self, path, hosts):
+    def __init__(self, path, hosts=[]):
+        self._hosts = hosts
+
         with open(path) as f:
             content = f.read()
         self._cnf = yaml.load(content)
-        self.deploy = []
+        self._deploy = []
+        self._server = []
 
         self._validate()
 
@@ -27,7 +31,7 @@ class Config(object):
                 raise ValidationError('"%s" is an unkown configuration option'
                                         % key)
 
-            setattr(self, key, self._validate_detail(value, grammar[key]))
+            setattr(self, '_' + key, self._validate_detail(value, grammar[key]))
 
     def _validate_detail(self, current, grammar):
         result = current
@@ -45,7 +49,8 @@ class Config(object):
                     list_dict[item] = None
 
             result = []
-            is_playeholder = len(list_dict) == 1 and key[0] == '<' and key[-1] == '>'
+            is_playeholder = len(list_dict) == 1 \
+                             and key[0] == '<' and key[-1] == '>'
             # <something> denotes a placeholder (anything)
 
             for element in current:
@@ -60,7 +65,7 @@ class Config(object):
                     gram = list_dict.values()[0] if is_playeholder \
                             else list_dict[key]
                     el = self._validate_detail(value, gram)
-                    result.append(el)
+                    result.append((key, el))
                 elif isinstance(element, list):
                     raise ValidationError('List not expected in list %s' % element)
                 else:
@@ -83,3 +88,19 @@ class Config(object):
                 raise ValidationError("Grammar type doesn't match - %s with %s"
                                       % (grammar, current))
         return result
+
+    def servers(self):
+        for server in self._hosts or self._server:
+            if isinstance(server, tuple):
+                yield Server(*server)
+            else:
+                yield Server(server)
+
+
+class Server(object):
+    def __init__(self, identifier, password=None):
+        self.identifier = identifier
+        self.password = password
+
+    def __str__(self):
+        return self.identifier

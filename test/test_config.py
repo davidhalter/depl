@@ -12,7 +12,7 @@ def validate(tmpdir, code, fail):
         with pytest.raises(config.ValidationError):
             config.Config(str(p), [])
     else:
-        assert config.Config(str(p), [])
+        return config.Config(str(p), [])
 
 
 def test_not_existing(tmpdir):
@@ -91,6 +91,8 @@ def test_deploy_valid(tmpdir):
 
 
 def test_server(tmpdir):
+    def servers_to_str(yml):
+        return [str(s) for s in validate(tmpdir, yml, False).servers()]
     s = """
     deploy:
       - django
@@ -98,7 +100,7 @@ def test_server(tmpdir):
       - foo@bar:22:
           password: password
     """
-    validate(tmpdir, s, False)
+    assert servers_to_str(s) == ['foo@bar:22']
     s = """
     deploy:
       - django
@@ -107,7 +109,7 @@ def test_server(tmpdir):
           password: password
       - example.com
     """
-    validate(tmpdir, s, False)
+    assert servers_to_str(s) == ['foo@bar:22', 'example.com']
 
 
 def test_server_invalid(tmpdir):
