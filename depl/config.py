@@ -76,7 +76,8 @@ class Config(object):
                 raise ValidationError('"%s" is an unkown configuration option'
                                         % key)
 
-            setattr(self, '_' + key, self._validate_detail(value, grammar[key]))
+            a = self._validate_detail(value, grammar[key])
+            setattr(self, '_' + key, a)
 
     def _validate_detail(self, current, grammar):
         result = current
@@ -112,7 +113,6 @@ class Config(object):
                     el = self._validate_detail(value, defaults)
                     defaults = dict(defaults)
                     defaults.update(el)
-                    print defaults, k
                     result.append((k, defaults))
                 elif isinstance(element, list):
                     raise ValidationError('List not expected in list %s' % element)
@@ -200,7 +200,7 @@ class Host(object):
     def __init__(self, identifier, settings={}):
         self.identifier = identifier
         self.password = settings.get('password', None)
-        self.id = settings.get('id', identifier)
+        self.id = settings.get('id', identifier) or identifier
 
     def __repr__(self):
         return '<%s: %s>' % (type(self).__name__, self.identifier)
@@ -210,7 +210,7 @@ class Deploy(object):
     def __init__(self, name, settings=None):
         self.name = name
         self.settings = settings or {}
-        self.id = self.settings.get('id', name)
+        self.id = self.settings['id']
 
     def __repr__(self):
         return '<%s: %s (%s)>' % (type(self).__name__, self.name, self.id)

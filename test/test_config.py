@@ -377,7 +377,7 @@ def test_extends(tmpdir):
     pools:
       - bar:
           hosts: [second]
-          deploy: [djangor2]
+          deploy: [django2]
     extends:
       - extend.yml
     """
