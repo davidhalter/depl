@@ -12,15 +12,37 @@ class Config(object):
         self._hosts_option = hosts
         self._pool_option = pool
 
+        self._path = os.path.abspath(path)
         with open(path) as f:
             content = f.read()
         self._cnf = yaml.load(content)
         self._deploy = []
         self._hosts = []
-        self._pool = {}
-        self._extends = {}
+        self._pool = []
+        self._extends = []
 
         self._validate()
+
+        # first merge hosts and deploy
+        self._deploy = list(self._process_deploy())
+        self._hosts = list(self._process_hosts())
+        configs = []
+        for extends in reversed(self._extends):
+            c = Config(os.path.join(os.path.dirname(self._path), extends))
+            configs.append(c)
+            self._merge(c, '_deploy')
+            self._merge(c, '_hosts')
+        # then merge pools
+        self._pool = self._process_pools()
+        for c in configs:
+            self._merge(c, '_pool')
+
+    def _merge(self, other, name):
+        current = getattr(self, name)
+        for obj in getattr(other, name):
+            for cur in current:
+                if obj.id != cur.id:
+                    current.insert(0, obj)
 
     def _validate(self):
         if not isinstance(self._cnf, dict):
@@ -99,7 +121,7 @@ class Config(object):
                                           % (grammar, current))
         return result
 
-    def _get_hosts(self):
+    def _process_hosts(self):
         for host in self._hosts_option or self._hosts:
             if self._hosts_option:
                 for s in self._hosts:
@@ -112,36 +134,40 @@ class Config(object):
             else:
                 yield Host(host)
 
-    def _get_deploys(self):
+    def _process_deploy(self):
         for deploy in self._deploy:
             if isinstance(deploy, tuple):
                 yield Deploy(*deploy)
             else:
                 yield Deploy(deploy)
 
-    def pools(self):
-        hosts = list(self._get_hosts())
-        deploys = list(self._get_deploys())
+    def _process_pools(self):
+        hosts = self._hosts
+        deploys = self._deploy
         def get_ids(ids, objects, is_host=False):
             for obj in objects:
                 for id in ids:
+                    print obj.id
                     if obj.id == id or is_host and self._pool_option and self._hosts_option:
                         yield obj
                 if not ids:
                     yield obj
 
         result = []
-        for name, pool in self._pool:
-            if self._pool_option not in (name, None):
+        for id, pool in self._pool:
+            if self._pool_option not in (id, None):
                 continue
-            result.append(Pool(name, get_ids(pool['hosts'], hosts, True),
-                                     get_ids(pool['deploy'], deploys)))
+            result.append(Pool(id, list(get_ids(pool['hosts'], hosts, True)),
+                                   list(get_ids(pool['deploy'], deploys))))
         if self._pool_option and not result:
             raise KeyError("Didn't find the pool '%s'." % self._pool_option)
         if not self._pool:
             # Create a default pool, if there's none.
-            result.append(Pool(None, self._get_hosts(), self._get_deploys()))
+            result.append(Pool(None, self._hosts, self._deploy))
         return result
+
+    def pools(self):
+        return self._pool
 
 
 class Host(object):
@@ -162,7 +188,7 @@ class Deploy(object):
 
 
 class Pool(object):
-    def __init__(self, name, hosts, deploys):
-        self.name = name
-        self.hosts = list(hosts)
-        self.deploys = list(deploys)
+    def __init__(self, id, hosts, deploy):
+        self.id = id
+        self.hosts = hosts
+        self.deploy = deploy
