@@ -8,12 +8,12 @@ deploy:
     - postgresql:
         id: id
 
-server:
+hosts:
     - <user@example:port>:
         password: null
         id: id
 
 pool:
     <name>:
-        server: [<id>]
+        hosts: [<id>]
         deploy: [<id>]

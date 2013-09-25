@@ -16,7 +16,7 @@ class Config(object):
             content = f.read()
         self._cnf = yaml.load(content)
         self._deploy = []
-        self._server = []
+        self._hosts = []
 
         self._validate()
 
@@ -96,20 +96,20 @@ class Config(object):
                                           % (grammar, current))
         return result
 
-    def _servers(self):
-        for server in self._hosts_option or self._server:
+    def _get_hosts(self):
+        for host in self._hosts_option or self._hosts:
             if self._hosts_option:
-                for s in self._server:
-                    if isinstance(s, tuple) and s[0] == server:
-                        # Overwrite the host option with all the server
+                for s in self._hosts:
+                    if isinstance(s, tuple) and s[0] == host:
+                        # Overwrite the host option with all the host
                         # settings, if they have the same host string.
-                        server = s
-            if isinstance(server, tuple):
-                yield Server(*server)
+                        host = s
+            if isinstance(host, tuple):
+                yield Host(*host)
             else:
-                yield Server(server)
+                yield Host(host)
 
-    def _deploys(self):
+    def _get_deploys(self):
         for deploy in self._deploy:
             if isinstance(deploy, tuple):
                 yield Deploy(*deploy)
@@ -117,12 +117,12 @@ class Config(object):
                 yield Deploy(deploy)
 
     def pools(self):
-        servers = list(self._servers())
-        deploys = list(self._deploys())
-        def get_ids(ids, objects, is_server=False):
+        hosts = list(self._get_hosts())
+        deploys = list(self._get_deploys())
+        def get_ids(ids, objects, is_host=False):
             for obj in objects:
                 for id in ids:
-                    if obj.id == id or is_server and self._pool_option and self._hosts_option:
+                    if obj.id == id or is_host and self._pool_option and self._hosts_option:
                         yield obj
                 if not ids:
                     yield obj
@@ -131,17 +131,17 @@ class Config(object):
         for name, pool in self._pool.items():
             if self._pool_option not in (name, None):
                 continue
-            result.append(Pool(name, get_ids(pool['server'], servers, True),
+            result.append(Pool(name, get_ids(pool['hosts'], hosts, True),
                                      get_ids(pool['deploy'], deploys)))
         if self._pool_option and not result:
             raise KeyError("Didn't find the pool '%s'." % self._pool_option)
         if not self._pool:
             # Create a default pool, if there's none.
-            result.append(Pool(None, self._servers(), self._deploys()))
+            result.append(Pool(None, self._get_hosts(), self._get_deploys()))
         return result
 
 
-class Server(object):
+class Host(object):
     def __init__(self, identifier, settings={}):
         self.identifier = identifier
         self.password = settings.get('password', None)
@@ -159,7 +159,7 @@ class Deploy(object):
 
 
 class Pool(object):
-    def __init__(self, name, servers, deploys):
+    def __init__(self, name, hosts, deploys):
         self.name = name
-        self.servers = list(servers)
+        self.hosts = list(hosts)
         self.deploys = list(deploys)
