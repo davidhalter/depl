@@ -17,6 +17,7 @@ class Config(object):
         self._cnf = yaml.load(content)
         self._deploy = []
         self._hosts = []
+        self._pool = {}
 
         self._validate()
 

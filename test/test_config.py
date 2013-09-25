@@ -16,7 +16,10 @@ def validate(tmpdir, code, fail=False, hosts=(), pool=None):
 
 
 def hosts_to_str(tmpdir, yml, hosts=()):
-    return [s.identifier for s in validate(tmpdir, yml, False, hosts)._get_hosts()]
+    pools = validate(tmpdir, yml, False, hosts).pools()
+    assert len(pools) == 1
+    return [s.identifier for s in pools[0].hosts]
+
 
 def test_not_existing(tmpdir):
     p = str(tmpdir.join("not_existing.yml"))
