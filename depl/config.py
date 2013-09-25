@@ -200,6 +200,7 @@ class Host(object):
     def __init__(self, identifier, settings={}):
         self.identifier = identifier
         self.password = settings.get('password', None)
+        # set identifier if key doesn't exist or it is None.
         self.id = settings.get('id', identifier) or identifier
 
     def __repr__(self):
