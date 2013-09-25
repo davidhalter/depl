@@ -9,7 +9,7 @@ class ValidationError(Exception):
 
 class Config(object):
     def __init__(self, path, hosts=(), pool=None):
-        self._hosts = hosts
+        self._hosts_option = hosts
         self._pool_option = pool
 
         with open(path) as f:
@@ -97,8 +97,8 @@ class Config(object):
         return result
 
     def _servers(self):
-        for server in self._hosts or self._server:
-            if self._hosts:
+        for server in self._hosts_option or self._server:
+            if self._hosts_option:
                 for s in self._server:
                     if isinstance(s, tuple) and s[0] == server:
                         # Overwrite the host option with all the server
@@ -122,7 +122,7 @@ class Config(object):
         def get_ids(ids, objects, is_server=False):
             for obj in objects:
                 for id in ids:
-                    if obj.id == id or is_server and self._pool_option and self._hosts:
+                    if obj.id == id or is_server and self._pool_option and self._hosts_option:
                         yield obj
                 if not ids:
                     yield obj
