@@ -103,21 +103,30 @@ class Config(object):
                     if len(element) != 1:
                         raise ValidationError('Dictionary directly in list, %s'
                                               % element)
-                    key, value = element.items()[0]
-                    if key not in list_dict and not is_placeholder:
+                    k, value = element.items()[0]
+                    if k not in list_dict and not is_placeholder:
                         raise ValidationError('Key %s not found in grammar'
-                                              % key)
-                    gram = list_dict.values()[0] if is_placeholder \
-                            else list_dict[key]
-                    el = self._validate_detail(value, gram)
-                    result.append((key, el))
+                                              % k)
+                    defaults = list_dict.values()[0] if is_placeholder \
+                               else list_dict[k]
+                    el = self._validate_detail(value, defaults)
+                    defaults = dict(defaults)
+                    defaults.update(el)
+                    print defaults, k
+                    result.append((k, defaults))
                 elif isinstance(element, list):
                     raise ValidationError('List not expected in list %s' % element)
                 else:
                     if element not in list_dict and not is_placeholder:
                         raise ValidationError('Element %s not found in grammar (%s)'
                                               % (element, list_dict))
-                    result.append(element)
+
+                    if element in list_dict and isinstance(list_dict[element], dict):
+                        result.append((element, list_dict[element]))
+                    elif is_placeholder and isinstance(list_dict[key], dict):
+                        result.append((element, list_dict[key]))
+                    else:
+                        result.append(element)
         elif isinstance(current, dict):
             if not isinstance(grammar, dict):
                 raise ValidationError("dict found: %s but %s expected. "
@@ -126,12 +135,12 @@ class Config(object):
             is_placeholder = len(grammar) == 1 and grammar.keys()[0][0] == '<' \
                              and grammar.keys()[0][-1] == '>'
             result = {}
-            for key, value in current.items():
-                if key not in grammar and not is_placeholder:
-                    raise ValidationError("Key %s is not in grammar." % key)
+            for k, value in current.items():
+                if k not in grammar and not is_placeholder:
+                    raise ValidationError("Key %s is not in grammar." % k)
 
-                gram = grammar.values()[0] if is_placeholder else grammar[key]
-                result[key] = self._validate_detail(value, gram)
+                gram = grammar.values()[0] if is_placeholder else grammar[k]
+                result[k] = self._validate_detail(value, gram)
         else:
             # normal type
             if type(grammar) != type(current):

@@ -89,6 +89,8 @@ def test_deploy_valid(tmpdir):
       - redis
     """
     assert deploy_to_str(s) == ['django', 'redis']
+    deploy = validate(tmpdir, s, False).pools()[0].deploy[0]
+    assert deploy.settings['port'] == 80
 
     s = """
     deploy:
