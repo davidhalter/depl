@@ -140,15 +140,15 @@ def test_server_invalid(tmpdir):
 def test_pool(tmpdir):
     s = """
     deploy:
-      - &web django
+      - django
       - redis
     server:
-      - &server1 foo@bar
+      - foo@bar
       - other
     pool:
       foo:
-        server: [*server1]
-        deploy: [*web]
+        server: [foo@bar]
+        deploy: [django]
     """
     pools = validate(tmpdir, s, False).pools()
     assert len(pools) == 1

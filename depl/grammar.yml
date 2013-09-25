@@ -15,5 +15,5 @@ server:
 
 pool:
     <name>:
-        server: [id]
-        deploy: [id]
+        server: [<id>]
+        deploy: [<id>]

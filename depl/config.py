@@ -89,8 +89,11 @@ class Config(object):
         else:
             # normal type
             if type(grammar) != type(current):
-                raise ValidationError("Grammar type doesn't match - %s with %s"
-                                      % (grammar, current))
+                if grammar is None:
+                    current = str(current)
+                else:
+                    raise ValidationError("Grammar type doesn't match - %s with %s"
+                                          % (grammar, current))
         return result
 
     def _servers(self, pool=None):
