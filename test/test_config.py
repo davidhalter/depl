@@ -9,6 +9,9 @@ def validate(tmpdir, code, fail=False, hosts=(), pool=None,
              file_name="default.yml"):
     p = tmpdir.join(file_name)
     p.write(textwrap.dedent(code))
+
+    # set recursion paths
+    config._recursion_paths = []
     if fail:
         with pytest.raises(config.ValidationError):
             config.Config(str(p), hosts, pool)
@@ -391,3 +394,16 @@ def test_extends(tmpdir):
         else:
             assert [host.identifier for host in pool.hosts] == ['second']
             assert [host.password for host in pool.hosts] == [None]
+
+
+def test_extends_recursion(tmpdir):
+    s1 = """
+    deploy:
+      - django
+
+    extends:
+      - extend1.yml
+    """
+    with pytest.raises(RuntimeError) as excinfo:
+        validate(tmpdir, s1, file_name='extend1.yml')
+    assert excinfo.value.message == 'Recursion in depl files.'

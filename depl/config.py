@@ -2,19 +2,21 @@ import os
 
 import yaml
 
-
-class ValidationError(Exception):
-    pass
+_recursion_paths = []
 
 
 def avoid_recursion(func):
-    paths = []
     def wrapper(self, path, *args, **kwargs):
         path = os.path.abspath(path)
-        if path in paths:
-            raise RuntimeError('Recursion in index files.')
+        if path in _recursion_paths:
+            raise RuntimeError('Recursion in depl files.')
+        _recursion_paths.append(path)
         func(self, path, *args, **kwargs)
     return wrapper
+
+
+class ValidationError(Exception):
+    pass
 
 
 class Config(object):
