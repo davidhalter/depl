@@ -18,6 +18,7 @@ class Config(object):
         self._deploy = []
         self._hosts = []
         self._pool = {}
+        self._extends = {}
 
         self._validate()
 
@@ -129,7 +130,7 @@ class Config(object):
                     yield obj
 
         result = []
-        for name, pool in self._pool.items():
+        for name, pool in self._pool:
             if self._pool_option not in (name, None):
                 continue
             result.append(Pool(name, get_ids(pool['hosts'], hosts, True),

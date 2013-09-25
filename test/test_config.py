@@ -5,8 +5,9 @@ import pytest
 from depl import config
 
 
-def validate(tmpdir, code, fail=False, hosts=(), pool=None):
-    p = tmpdir.join("default.yml")
+def validate(tmpdir, code, fail=False, hosts=(), pool=None,
+             file_name="default.yml"):
+    p = tmpdir.join(file_name)
     p.write(textwrap.dedent(code))
     if fail:
         with pytest.raises(config.ValidationError):
@@ -151,9 +152,9 @@ def test_pool(tmpdir):
       - foo@bar
       - other
     pool:
-      foo:
-        hosts: [foo@bar]
-        deploy: [django]
+      - foo:
+          hosts: [foo@bar]
+          deploy: [django]
     """
     pools = validate(tmpdir, s, False).pools()
     assert len(pools) == 1
@@ -173,10 +174,10 @@ def test_pool_invalid(tmpdir):
     hosts:
       - foo@bar
     pool:
-      foo:
-        hosts: [foo@bar]
-        deploy: [django]
-        unknown_option: haha
+      - foo:
+          hosts: [foo@bar]
+          deploy: [django]
+          unknown_option: haha
     """
     validate(tmpdir, s, True)
 
@@ -205,12 +206,12 @@ def test_pool_param(tmpdir):
       - foo@bar
       - other
     pool:
-      foo:
-        hosts: [foo@bar]
-        deploy: [django]
-      bar:
-        hosts: [foo@bar]
-        deploy: [redis]
+      - foo:
+          hosts: [foo@bar]
+          deploy: [django]
+      - bar:
+          hosts: [foo@bar]
+          deploy: [redis]
     """
     assert len(validate(tmpdir, s).pools()) == 2
     assert len(validate(tmpdir, s, pool='foo').pools()) == 1
@@ -227,12 +228,12 @@ def test_pool_hosts_param(tmpdir):
       - foo@bar
       - other
     pool:
-      foo:
-        hosts: [foo@bar]
-        deploy: [django]
-      bar:
-        hosts: [foo@bar]
-        deploy: [redis]
+      - foo:
+          hosts: [foo@bar]
+          deploy: [django]
+      - bar:
+          hosts: [foo@bar]
+          deploy: [redis]
     """
     assert len(validate(tmpdir, s).pools()) == 2
     pool = validate(tmpdir, s, hosts=['baz'], pool='foo').pools()[0]
@@ -256,15 +257,15 @@ def test_hosts_param_with_pool(tmpdir):
           password: something
       - other
     pool:
-      foo:
-        hosts: [first]
-        deploy: [django]
-      bar:
-        hosts: [first, second]
-        deploy: [redis]
-      baz:
-        hosts: [third]
-        deploy: [redis]
+      - foo:
+          hosts: [first]
+          deploy: [django]
+      - bar:
+          hosts: [first, second]
+          deploy: [redis]
+      - baz:
+          hosts: [third]
+          deploy: [redis]
     """
     # other is not being used in pools
     pools = validate(tmpdir, s, hosts=['other']).pools()
