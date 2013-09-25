@@ -96,37 +96,36 @@ class Config(object):
                                           % (grammar, current))
         return result
 
-    def _servers(self, pool=None):
-        if pool and self._hosts and self._pool and not self._pool_option:
-            new = [h for h in self._hosts if h in pool]
-        else:
-            new = self._hosts or pool or self._server
-        for server in new:
+    def _servers(self):
+        for server in self._hosts or self._server:
             if isinstance(server, tuple):
                 yield Server(*server)
             else:
                 yield Server(server)
 
-    def _deploys(self, pool=None):
-        for deploy in pool or self._deploy:
+    def _deploys(self):
+        for deploy in self._deploy:
             if isinstance(deploy, tuple):
                 yield Deploy(*deploy)
             else:
                 yield Deploy(deploy)
 
     def pools(self):
-        servers = self._servers()
-        deploys = self._deploys()
-        def get_ids(ids, objects):
-            for id in ids:
-                for obj in objects:
-                    if id == obj.id:
+        servers = list(self._servers())
+        deploys = list(self._deploys())
+        def get_ids(ids, objects, is_server=False):
+            for obj in objects:
+                for id in ids:
+                    if obj.id == id or is_server and self._pool_option and self._hosts:
                         yield obj
+                if not ids:
+                    yield obj
+
         result = []
         for name, pool in self._pool.items():
-            if self._pool_option is not None and self._pool_option != name:
+            if self._pool_option not in (name, None):
                 continue
-            result.append(Pool(name, get_ids(pool['server'], servers),
+            result.append(Pool(name, get_ids(pool['server'], servers, True),
                                      get_ids(pool['deploy'], deploys)))
         if self._pool_option and not result:
             raise KeyError("Didn't find the pool '%s'." % self._pool_option)
@@ -141,6 +140,9 @@ class Server(object):
         self.identifier = identifier
         self.password = settings.get('password', None)
         self.id = settings.get('id', identifier)
+
+    def __repr__(self):
+        return '<%s: %s>' % (type(self).__name__, self.identifier)
 
 
 class Deploy(object):
