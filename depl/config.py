@@ -7,12 +7,23 @@ class ValidationError(Exception):
     pass
 
 
+def avoid_recursion(func):
+    paths = []
+    def wrapper(self, path, *args, **kwargs):
+        path = os.path.abspath(path)
+        if path in paths:
+            raise RuntimeError('Recursion in index files.')
+        func(self, path, *args, **kwargs)
+    return wrapper
+
+
 class Config(object):
+    @avoid_recursion
     def __init__(self, path, hosts=(), pool=None):
         self._hosts_option = hosts
         self._pool_option = pool
 
-        self._path = os.path.abspath(path)
+        self._path = path
         with open(path) as f:
             content = f.read()
         self._cnf = yaml.load(content)
