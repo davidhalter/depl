@@ -154,7 +154,7 @@ def test_pool(tmpdir):
     hosts:
       - foo@bar
       - other
-    pool:
+    pools:
       - foo:
           hosts: [foo@bar]
           deploy: [django]
@@ -176,7 +176,7 @@ def test_pool_invalid(tmpdir):
       - django
     hosts:
       - foo@bar
-    pool:
+    pools:
       - foo:
           hosts: [foo@bar]
           deploy: [django]
@@ -208,7 +208,7 @@ def test_pool_param(tmpdir):
     hosts:
       - foo@bar
       - other
-    pool:
+    pools:
       - foo:
           hosts: [foo@bar]
           deploy: [django]
@@ -230,7 +230,7 @@ def test_pool_hosts_param(tmpdir):
     hosts:
       - foo@bar
       - other
-    pool:
+    pools:
       - foo:
           hosts: [foo@bar]
           deploy: [django]
@@ -259,7 +259,7 @@ def test_hosts_param_with_pool(tmpdir):
       - third:
           password: something
       - other
-    pool:
+    pools:
       - foo:
           hosts: [first]
           deploy: [django]
@@ -353,7 +353,7 @@ def test_extends(tmpdir):
       - first:
           password: "shouldn't appear"
       - second
-    pool:
+    pools:
         - foo:
             hosts: [first]
             deploy: [django1]
@@ -370,7 +370,7 @@ def test_extends(tmpdir):
     hosts:
       - first:
           password: "should appear"
-    pool:
+    pools:
       - bar:
           hosts: [second]
           deploy: [djangor2]

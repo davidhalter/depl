@@ -13,7 +13,7 @@ hosts:
         password: null
         id: <user@example:port>
 
-pool:
+pools:
     - <name>:
         hosts: [<id>]
         deploy: [<id>]

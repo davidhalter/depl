@@ -31,7 +31,7 @@ class Config(object):
         self._cnf = yaml.load(content)
         self._deploy = []
         self._hosts = []
-        self._pool = []
+        self._pools = []
         self._extends = []
 
         self._validate()
@@ -53,9 +53,9 @@ class Config(object):
                            if h.identifier in self._hosts_option]
         # then merge pools
         for c in configs:
-            for key, value in reversed(c._pool):
-                if key not in [p[0] for p in self._pool]:  # list of tuple
-                    self._pool.insert(0, (key, value))
+            for key, value in reversed(c._pools):
+                if key not in [p[0] for p in self._pools]:  # list of tuple
+                    self._pools.insert(0, (key, value))
 
         self.pools = lambda: self._process_pools()
 
@@ -174,14 +174,14 @@ class Config(object):
                     yield obj
 
         result = []
-        for id, pool in self._pool:
+        for id, pool in self._pools:
             if self._pool_option not in (id, None):
                 continue
             result.append(Pool(id, list(get_ids(pool['hosts'], hosts, True)),
                                    list(get_ids(pool['deploy'], deploys))))
         if self._pool_option and not result:
             raise KeyError("Didn't find the pool '%s'." % self._pool_option)
-        if not self._pool:
+        if not self._pools:
             # Create a default pool, if there's none.
             result.append(Pool(None, self._hosts, self._deploy))
         return result
