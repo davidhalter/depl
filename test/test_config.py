@@ -72,7 +72,9 @@ def test_deploy_invalid(tmpdir):
 
 def test_deploy_valid(tmpdir):
     def deploys_to_str(yml):
-        return [s.name for s in validate(tmpdir, yml, False)._get_deploys()]
+        pools = validate(tmpdir, yml, False).pools()
+        assert len(pools) == 1
+        return [s.name for s in pools[0].deploys]
 
     s = """
     deploy:
