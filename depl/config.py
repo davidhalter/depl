@@ -94,9 +94,9 @@ class Config(object):
                     list_dict[item] = None
 
             result = []
-            is_playeholder = len(list_dict) == 1 \
-                             and key[0] == '<' and key[-1] == '>'
             # <something> denotes a placeholder (anything)
+            is_placeholder = len(list_dict) == 1 \
+                             and key[0] == '<' and key[-1] == '>'
 
             for element in current:
                 if isinstance(element, dict):
@@ -104,17 +104,17 @@ class Config(object):
                         raise ValidationError('Dictionary directly in list, %s'
                                               % element)
                     key, value = element.items()[0]
-                    if key not in list_dict and not is_playeholder:
+                    if key not in list_dict and not is_placeholder:
                         raise ValidationError('Key %s not found in grammar'
                                               % key)
-                    gram = list_dict.values()[0] if is_playeholder \
+                    gram = list_dict.values()[0] if is_placeholder \
                             else list_dict[key]
                     el = self._validate_detail(value, gram)
                     result.append((key, el))
                 elif isinstance(element, list):
                     raise ValidationError('List not expected in list %s' % element)
                 else:
-                    if element not in list_dict and not is_playeholder:
+                    if element not in list_dict and not is_placeholder:
                         raise ValidationError('Element %s not found in grammar (%s)'
                                               % (element, list_dict))
                     result.append(element)
@@ -123,14 +123,14 @@ class Config(object):
                 raise ValidationError("dict found: %s but %s expected. "
                                       % (current, grammar))
 
-            is_playeholder = len(grammar) == 1 and grammar.keys()[0][0] == '<' \
+            is_placeholder = len(grammar) == 1 and grammar.keys()[0][0] == '<' \
                              and grammar.keys()[0][-1] == '>'
             result = {}
             for key, value in current.items():
-                if key not in grammar and not is_playeholder:
+                if key not in grammar and not is_placeholder:
                     raise ValidationError("Key %s is not in grammar." % key)
 
-                gram = grammar.values()[0] if is_playeholder else grammar[key]
+                gram = grammar.values()[0] if is_placeholder else grammar[key]
                 result[key] = self._validate_detail(value, gram)
         else:
             # normal type
