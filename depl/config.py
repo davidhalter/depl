@@ -90,7 +90,7 @@ class Config(object):
             # normal type
             if type(grammar) != type(current):
                 if grammar is None:
-                    current = str(current)
+                    result = str(current)
                 else:
                     raise ValidationError("Grammar type doesn't match - %s with %s"
                                           % (grammar, current))
@@ -115,12 +115,19 @@ class Config(object):
                 yield Deploy(deploy)
 
     def pools(self):
+        servers = self._servers()
+        deploys = self._deploys()
+        def get_ids(ids, objects):
+            for id in ids:
+                for obj in objects:
+                    if id == obj.id:
+                        yield obj
         result = []
         for name, pool in self._pool.items():
             if self._pool_option is not None and self._pool_option != name:
                 continue
-            result.append(Pool(name, self._servers(pool['server']),
-                                     self._deploys(pool['deploy'])))
+            result.append(Pool(name, get_ids(pool['server'], servers),
+                                     get_ids(pool['deploy'], deploys)))
         if self._pool_option and not result:
             raise KeyError("Didn't find the pool '%s'." % self._pool_option)
         if not self._pool:
@@ -133,12 +140,14 @@ class Server(object):
     def __init__(self, identifier, settings={}):
         self.identifier = identifier
         self.password = settings.get('password', None)
+        self.id = settings.get('id', identifier)
 
 
 class Deploy(object):
     def __init__(self, name, settings=None):
         self.name = name
         self.settings = settings or {}
+        self.id = self.settings.get('id', name)
 
 
 class Pool(object):

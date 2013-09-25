@@ -274,8 +274,6 @@ def test_hosts_param_with_pool(tmpdir):
             assert [svr.identifier for svr in pool.servers] == ['first']
 
     # third has other settings
-    import yaml
-    print yaml.load(s)
     for pool in validate(tmpdir, s, hosts=['third']).pools():
         if pool.name == 'baz':
             assert [svr.identifier for svr in pool.servers] == ['third']
