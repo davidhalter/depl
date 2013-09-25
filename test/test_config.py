@@ -93,11 +93,13 @@ def test_deploy_valid(tmpdir):
     s = """
     deploy:
       - django:
-          port: 80
+          port: 81
       - redis
     """
     assert deploy_to_str(s) == ['django', 'redis']
-    validate(tmpdir, s, False)
+    deploy = validate(tmpdir, s, False).pools()[0].deploy[0]
+    assert deploy.settings['port'] == 81
+    assert deploy.settings['url'] == '127.0.0.1'
 
     s = """
     deploy:
