@@ -98,6 +98,12 @@ class Config(object):
 
     def _servers(self):
         for server in self._hosts or self._server:
+            if self._hosts:
+                for s in self._server:
+                    if isinstance(s, tuple) and s[0] == server:
+                        # Overwrite the host option with all the server
+                        # settings, if they have the same host string.
+                        server = s
             if isinstance(server, tuple):
                 yield Server(*server)
             else:
