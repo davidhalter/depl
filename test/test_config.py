@@ -289,6 +289,7 @@ def test_hosts_param_with_pool(tmpdir):
 
 
 def test_extends_simple(tmpdir):
+    # -> multi inheritance
     s1 = """
     deploy:
       - django
@@ -307,12 +308,34 @@ def test_extends_simple(tmpdir):
       - extend1.yml
       - extend2.yml
     """
-    # create first file
+    # create first/second file
     validate(tmpdir, s1, hosts=['other'], file_name='extend1.yml')
-    # create first file
     validate(tmpdir, s2, hosts=['other'], file_name='extend2.yml')
 
-    # create second
+    # create third
+    pools = validate(tmpdir, s3, hosts=['other']).pools()
+    assert len(pools) == 1
+    assert [p.name for p in pools[0].deploy] == ['django', 'redis', 'postgresql']
+
+    # -> simple inheritance
+    s2 = """
+    deploy:
+      - redis
+
+    extends:
+      - extend1.yml
+    """
+
+    s3 = """
+    deploy:
+      - postgresql
+
+    extends:
+      - extend2.yml
+    """
+
+    # create third
+    validate(tmpdir, s2, hosts=['other'], file_name='extend2.yml')
     pools = validate(tmpdir, s3, hosts=['other']).pools()
     assert len(pools) == 1
     assert [p.name for p in pools[0].deploy] == ['django', 'redis', 'postgresql']
