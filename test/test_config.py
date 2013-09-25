@@ -164,13 +164,13 @@ def test_pool(tmpdir):
 def test_pool_invalid(tmpdir):
     s = """
     deploy:
-      - &web django
+      - django
     server:
-      - &server1 foo@bar
+      - foo@bar
     pool:
       foo:
-        server: [*server1]
-        deploy: [*web]
+        server: [foo@bar]
+        deploy: [django]
         unknown_option: haha
     """
     validate(tmpdir, s, True)
@@ -179,12 +179,12 @@ def test_pool_invalid(tmpdir):
 def test_hosts_param(tmpdir):
     s = """
     deploy:
-      - &web django
+      - django
     """
     assert servers_to_str(tmpdir, s, ['foo@bar']) == ['foo@bar']
     s = """
     deploy:
-      - &web django
+      - django
     server:
       - foo@baz
     """
@@ -194,18 +194,18 @@ def test_hosts_param(tmpdir):
 def test_pool_param(tmpdir):
     s = """
     deploy:
-      - &web django
-      - &redis redis
+      - django
+      - redis
     server:
-      - &server1 foo@bar
+      - foo@bar
       - other
     pool:
       foo:
-        server: [*server1]
-        deploy: [*web]
+        server: [foo@bar]
+        deploy: [django]
       bar:
-        server: [*server1]
-        deploy: [*redis]
+        server: [foo@bar]
+        deploy: [redis]
     """
     assert len(validate(tmpdir, s).pools()) == 2
     assert len(validate(tmpdir, s, pool='foo').pools()) == 1
@@ -216,18 +216,18 @@ def test_pool_param(tmpdir):
 def test_pool_hosts_param(tmpdir):
     s = """
     deploy:
-      - &web django
-      - &redis redis
+      - django
+      - redis
     server:
-      - &server1 foo@bar
+      - foo@bar
       - other
     pool:
       foo:
-        server: [*server1]
-        deploy: [*web]
+        server: [foo@bar]
+        deploy: [django]
       bar:
-        server: [*server1]
-        deploy: [*redis]
+        server: [foo@bar]
+        deploy: [redis]
     """
     assert len(validate(tmpdir, s).pools()) == 2
     pool = validate(tmpdir, s, hosts=['baz'], pool='foo').pools()[0]
@@ -242,24 +242,24 @@ def test_hosts_param_with_pool(tmpdir):
     """
     s = """
     deploy:
-      - &web django
-      - &redis redis
+      - django
+      - redis
     server:
-      - &server1 foo@bar
-      - &server2 second
-      - &server3 third:
+      - first
+      - second
+      - third:
           password: something
       - other
     pool:
       foo:
-        server: [*server1]
-        deploy: [*web]
+        server: [first]
+        deploy: [django]
       bar:
-        server: [*server1, *server2]
-        deploy: [*redis]
+        server: [first, second]
+        deploy: [redis]
       baz:
-        server: [*server3]
-        deploy: [*redis]
+        server: [third]
+        deploy: [redis]
     """
     # other is not being used in pools
     pools = validate(tmpdir, s, hosts=['other']).pools()
@@ -267,11 +267,11 @@ def test_hosts_param_with_pool(tmpdir):
         assert pool.servers == []
 
     # foo@bar is being used in foo/bar
-    for pool in validate(tmpdir, s, hosts=['foo@bar']).pools():
+    for pool in validate(tmpdir, s, hosts=['first']).pools():
         if pool.name == 'baz':
             assert pool.servers == []
         else:
-            assert [svr.identifier for svr in pool.servers] == ['foo@bar']
+            assert [svr.identifier for svr in pool.servers] == ['first']
 
     # third has other settings
     import yaml
