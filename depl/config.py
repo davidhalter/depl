@@ -39,13 +39,16 @@ class Config(object):
             self._hosts = [h for h in self._hosts
                            if h.identifier in self._hosts_option]
         # then merge pools
-        self._pool = self._process_pools()
         for c in configs:
-            self._merge(c, '_pool')
+            for key, value in reversed(c._pool):
+                if key not in [p[0] for p in self._pool]:  # list of tuple
+                    self._pool.insert(0, (key, value))
+
+        self.pools = lambda: self._process_pools()
 
     def _merge(self, other, name):
         current = getattr(self, name)
-        for obj in getattr(other, name):
+        for obj in reversed(getattr(other, name)):
             if obj.id not in [cur.id for cur in current]:
                 current.insert(0, obj)
 
@@ -169,9 +172,6 @@ class Config(object):
             # Create a default pool, if there's none.
             result.append(Pool(None, self._hosts, self._deploy))
         return result
-
-    def pools(self):
-        return self._pool
 
 
 class Host(object):

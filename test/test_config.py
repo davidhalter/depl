@@ -366,4 +366,5 @@ def test_extends(tmpdir):
             assert [host.identifier for host in pool.hosts] == ['first']
             assert [host.password for host in pool.hosts] == ['should appear']
         else:
-            assert pool.hosts == []
+            assert [host.identifier for host in pool.hosts] == ['second']
+            assert [host.password for host in pool.hosts] == [None]
