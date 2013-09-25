@@ -127,9 +127,9 @@ class Config(object):
 
 
 class Server(object):
-    def __init__(self, identifier, password=None):
+    def __init__(self, identifier, settings={}):
         self.identifier = identifier
-        self.password = password
+        self.password = settings.get('password', None)
 
 
 class Deploy(object):
