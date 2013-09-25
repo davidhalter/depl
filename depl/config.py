@@ -77,7 +77,8 @@ class Config(object):
                     result.append(element)
         elif isinstance(current, dict):
             if not isinstance(grammar, dict):
-                raise ValidationError("Expected a dictionary in %s" % current)
+                raise ValidationError("dict found: %s but %s expected. "
+                                      % (current, grammar))
 
             is_playeholder = len(grammar) == 1 and grammar.keys()[0][0] == '<' \
                              and grammar.keys()[0][-1] == '>'

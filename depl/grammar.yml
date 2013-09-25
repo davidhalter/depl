@@ -17,3 +17,6 @@ pool:
     - <name>:
         hosts: [<id>]
         deploy: [<id>]
+
+extends:
+    - <file>

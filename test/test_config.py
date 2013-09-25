@@ -286,3 +286,81 @@ def test_hosts_param_with_pool(tmpdir):
             assert [svr.password for svr in pool.hosts] == ['something']
         else:
             assert pool.hosts == []
+
+
+def test_extends_simple(tmpdir):
+    s1 = """
+    deploy:
+      - django
+    """
+
+    s2 = """
+    deploy:
+      - redis
+    """
+
+    s3 = """
+    deploy:
+      - postgresql
+
+    extends:
+      - extend1.yml
+      - extend2.yml
+    """
+    # create first file
+    validate(tmpdir, s1, hosts=['other'], file_name='extend1.yml')
+    # create first file
+    validate(tmpdir, s2, hosts=['other'], file_name='extend2.yml')
+
+    # create second
+    pools = validate(tmpdir, s3, hosts=['other']).pools()
+    assert len(pools) == 1
+    assert [p.name for p in pools[0].deploys] == ['django', 'redis', 'postgresql']
+
+
+def test_extends(tmpdir):
+    s1 = """
+    deploy:
+      - django:
+          id: django1
+    hosts:
+      - first:
+          password: "shouldn't appear"
+      - second
+    pool:
+        - foo:
+            hosts: [first]
+            deploy: [django1]
+        - bar:
+            hosts: [second]
+            deploy: [django1]
+    """
+
+    s2 = """
+    deploy:
+      - django:
+          id: django2
+      - redis
+    hosts:
+      - first:
+          password: "should appear"
+    pool:
+      - bar:
+          hosts: [second]
+          deploy: [djangor2]
+    extends:
+      - extend.yml
+    """
+    # create first file
+    validate(tmpdir, s1, hosts=['other'], file_name='extend.yml')
+
+    # create second
+    pools = validate(tmpdir, s2, hosts=['other']).pools()
+    assert len(pools) == 2
+
+    for pool in pools:
+        if pool.name == 'foo':
+            assert [svr.identifier for svr in pool.hosts] == ['third']
+            assert [svr.password for svr in pool.hosts] == ['something']
+        else:
+            assert pool.hosts == []
