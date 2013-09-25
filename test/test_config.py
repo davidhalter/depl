@@ -235,8 +235,6 @@ def test_pool_hosts_param(tmpdir):
     assert [s.identifier for s in pool.servers] == ['baz']
 
 
-'skip for now, because of design problems'
-@pytest.mark.skipif("True")
 def test_hosts_param_with_pool(tmpdir):
     """
     No pool param but a host param with pools, should only run on "known" SSH
