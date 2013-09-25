@@ -4,14 +4,14 @@ deploy:
         url: 127.0.0.1
         port: 80
     - redis:
-        id: id
+        id: redis
     - postgresql:
-        id: id
+        id: postgresql
 
 hosts:
     - <user@example:port>:
         password: null
-        id: id
+        id: <user@example:port>
 
 pool:
     - <name>:
