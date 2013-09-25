@@ -28,10 +28,16 @@ class Config(object):
         self._hosts = list(self._process_hosts())
         configs = []
         for extends in reversed(self._extends):
-            c = Config(os.path.join(os.path.dirname(self._path), extends))
+            path = os.path.join(os.path.dirname(self._path), extends)
+            c = Config(path, self._hosts_option, self._pool_option)
             configs.append(c)
             self._merge(c, '_deploy')
             self._merge(c, '_hosts')
+
+        # check hosts
+        if self._hosts_option:
+            self._hosts = [h for h in self._hosts
+                           if h.identifier in self._hosts_option]
         # then merge pools
         self._pool = self._process_pools()
         for c in configs:
@@ -40,9 +46,8 @@ class Config(object):
     def _merge(self, other, name):
         current = getattr(self, name)
         for obj in getattr(other, name):
-            for cur in current:
-                if obj.id != cur.id:
-                    current.insert(0, obj)
+            if obj.id not in [cur.id for cur in current]:
+                current.insert(0, obj)
 
     def _validate(self):
         if not isinstance(self._cnf, dict):
@@ -147,7 +152,6 @@ class Config(object):
         def get_ids(ids, objects, is_host=False):
             for obj in objects:
                 for id in ids:
-                    print obj.id
                     if obj.id == id or is_host and self._pool_option and self._hosts_option:
                         yield obj
                 if not ids:
@@ -186,9 +190,15 @@ class Deploy(object):
         self.settings = settings or {}
         self.id = self.settings.get('id', name)
 
+    def __repr__(self):
+        return '<%s: %s (%s)>' % (type(self).__name__, self.name, self.id)
+
 
 class Pool(object):
     def __init__(self, id, hosts, deploy):
         self.id = id
         self.hosts = hosts
         self.deploy = deploy
+
+    def __repr__(self):
+        return '<%s: %s>' % (type(self).__name__, self.id)

@@ -277,13 +277,13 @@ def test_hosts_param_with_pool(tmpdir):
         if pool.id == 'baz':
             assert pool.hosts == []
         else:
-            assert [svr.identifier for svr in pool.hosts] == ['first']
+            assert [host.identifier for host in pool.hosts] == ['first']
 
     # third has other settings
     for pool in validate(tmpdir, s, hosts=['third']).pools():
         if pool.id == 'baz':
-            assert [svr.identifier for svr in pool.hosts] == ['third']
-            assert [svr.password for svr in pool.hosts] == ['something']
+            assert [host.identifier for host in pool.hosts] == ['third']
+            assert [host.password for host in pool.hosts] == ['something']
         else:
             assert pool.hosts == []
 
@@ -352,15 +352,18 @@ def test_extends(tmpdir):
       - extend.yml
     """
     # create first file
-    validate(tmpdir, s1, hosts=['other'], file_name='extend.yml')
+    validate(tmpdir, s1, file_name='extend.yml')
 
-    # create second
     pools = validate(tmpdir, s2, hosts=['other']).pools()
+    assert len(pools) == 2
+    assert not pools[0].hosts and not pools[0].hosts
+    # create second
+    pools = validate(tmpdir, s2).pools()
     assert len(pools) == 2
 
     for pool in pools:
         if pool.id == 'foo':
-            assert [svr.identifier for svr in pool.hosts] == ['third']
-            assert [svr.password for svr in pool.hosts] == ['something']
+            assert [host.identifier for host in pool.hosts] == ['first']
+            assert [host.password for host in pool.hosts] == ['should appear']
         else:
             assert pool.hosts == []
