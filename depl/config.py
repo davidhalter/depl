@@ -57,7 +57,7 @@ class Config(object):
                 if key not in [p[0] for p in self._pools]:  # list of tuple
                     self._pools.insert(0, (key, value))
 
-        self.pools = lambda: self._process_pools()
+        self.pools = self._process_pools()
 
     def _merge(self, other, name):
         current = getattr(self, name)

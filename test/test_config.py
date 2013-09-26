@@ -20,7 +20,7 @@ def validate(tmpdir, code, fail=False, hosts=(), pool=None,
 
 
 def hosts_to_str(tmpdir, yml, hosts=()):
-    pools = validate(tmpdir, yml, False, hosts).pools()
+    pools = validate(tmpdir, yml, False, hosts).pools
     assert len(pools) == 1
     return [s.identifier for s in pools[0].hosts]
 
@@ -79,7 +79,7 @@ def test_deploy_invalid(tmpdir):
 
 def test_deploy_valid(tmpdir):
     def deploy_to_str(yml):
-        pools = validate(tmpdir, yml, False).pools()
+        pools = validate(tmpdir, yml, False).pools
         assert len(pools) == 1
         return [s.name for s in pools[0].deploy]
 
@@ -89,7 +89,7 @@ def test_deploy_valid(tmpdir):
       - redis
     """
     assert deploy_to_str(s) == ['django', 'redis']
-    deploy = validate(tmpdir, s, False).pools()[0].deploy[0]
+    deploy = validate(tmpdir, s, False).pools[0].deploy[0]
     assert deploy.settings['port'] == 80
 
     s = """
@@ -99,7 +99,7 @@ def test_deploy_valid(tmpdir):
       - redis
     """
     assert deploy_to_str(s) == ['django', 'redis']
-    deploy = validate(tmpdir, s, False).pools()[0].deploy[0]
+    deploy = validate(tmpdir, s, False).pools[0].deploy[0]
     assert deploy.settings['port'] == 81
     assert deploy.settings['url'] == '127.0.0.1'
 
@@ -128,7 +128,7 @@ def test_hosts(tmpdir):
       - example.com
     """
     assert hosts_to_str(tmpdir, s) == ['foo@bar:22', 'example.com']
-    assert list(validate(tmpdir, s).pools()[0].hosts)[0].password == 'pwd'
+    assert list(validate(tmpdir, s).pools[0].hosts)[0].password == 'pwd'
 
 
 def test_hosts_invalid(tmpdir):
@@ -163,7 +163,7 @@ def test_pool(tmpdir):
           hosts: [foo@bar]
           deploy: [django]
     """
-    pools = validate(tmpdir, s, False).pools()
+    pools = validate(tmpdir, s, False).pools
     assert len(pools) == 1
 
     hosts = pools[0].hosts
@@ -220,10 +220,10 @@ def test_pool_param(tmpdir):
           hosts: [foo@bar]
           deploy: [redis]
     """
-    assert len(validate(tmpdir, s).pools()) == 2
-    assert len(validate(tmpdir, s, pool='foo').pools()) == 1
+    assert len(validate(tmpdir, s).pools) == 2
+    assert len(validate(tmpdir, s, pool='foo').pools) == 1
     with pytest.raises(KeyError):
-        validate(tmpdir, s, pool='not_existing').pools()
+        validate(tmpdir, s, pool='not_existing').pools
 
 
 def test_pool_hosts_param(tmpdir):
@@ -242,8 +242,8 @@ def test_pool_hosts_param(tmpdir):
           hosts: [foo@bar]
           deploy: [redis]
     """
-    assert len(validate(tmpdir, s).pools()) == 2
-    pool = validate(tmpdir, s, hosts=['baz'], pool='foo').pools()[0]
+    assert len(validate(tmpdir, s).pools) == 2
+    pool = validate(tmpdir, s, hosts=['baz'], pool='foo').pools[0]
     assert pool.id == 'foo'
     assert [s.identifier for s in pool.hosts] == ['baz']
 
@@ -275,19 +275,19 @@ def test_hosts_param_with_pool(tmpdir):
           deploy: [redis]
     """
     # other is not being used in pools
-    pools = validate(tmpdir, s, hosts=['other']).pools()
+    pools = validate(tmpdir, s, hosts=['other']).pools
     for pool in pools:
         assert pool.hosts == []
 
     # foo@bar is being used in foo/bar
-    for pool in validate(tmpdir, s, hosts=['first']).pools():
+    for pool in validate(tmpdir, s, hosts=['first']).pools:
         if pool.id == 'baz':
             assert pool.hosts == []
         else:
             assert [host.identifier for host in pool.hosts] == ['first']
 
     # third has other settings
-    for pool in validate(tmpdir, s, hosts=['third']).pools():
+    for pool in validate(tmpdir, s, hosts=['third']).pools:
         if pool.id == 'baz':
             assert [host.identifier for host in pool.hosts] == ['third']
             assert [host.password for host in pool.hosts] == ['something']
@@ -320,7 +320,7 @@ def test_extends_simple(tmpdir):
     validate(tmpdir, s2, hosts=['other'], file_name='extend2.yml')
 
     # create third
-    pools = validate(tmpdir, s3, hosts=['other']).pools()
+    pools = validate(tmpdir, s3, hosts=['other']).pools
     assert len(pools) == 1
     assert [p.name for p in pools[0].deploy] == ['django', 'redis', 'postgresql']
 
@@ -343,7 +343,7 @@ def test_extends_simple(tmpdir):
 
     # create third
     validate(tmpdir, s2, hosts=['other'], file_name='extend2.yml')
-    pools = validate(tmpdir, s3, hosts=['other']).pools()
+    pools = validate(tmpdir, s3, hosts=['other']).pools
     assert len(pools) == 1
     assert [p.name for p in pools[0].deploy] == ['django', 'redis', 'postgresql']
 
@@ -384,11 +384,11 @@ def test_extends(tmpdir):
     # create first file
     validate(tmpdir, s1, file_name='extend.yml')
 
-    pools = validate(tmpdir, s2, hosts=['other']).pools()
+    pools = validate(tmpdir, s2, hosts=['other']).pools
     assert len(pools) == 2
     assert not pools[0].hosts and not pools[0].hosts
     # create second
-    pools = validate(tmpdir, s2).pools()
+    pools = validate(tmpdir, s2).pools
     assert len(pools) == 2
 
     for pool in pools:
