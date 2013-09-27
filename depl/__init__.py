@@ -9,7 +9,7 @@ Usage:
   depl -h | --help
 
 Options:
-  -c, --config=<file>   Deploy configuration file [default: .depl.yml]
+  -c, --config=<file>   Deploy configuration file [default: depl.yml]
   -p, --pool=<name>     Define a pool that is going to be deployed.
 """
 

@@ -25,7 +25,7 @@ discussion about Python web deployment and deployment in general.
 
 -------------------------------------------------------------------------------
 
-Deploying is easy! For example create a ``.depl.yml`` file in your Django
+Deploying is easy! For example create a ``depl.yml`` file in your Django
 project:
 
 .. code:: yaml
