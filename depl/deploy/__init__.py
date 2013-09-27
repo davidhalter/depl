@@ -13,28 +13,30 @@ from distutils.spawn import find_executable
 
 import yaml
 
+
 def load(name, settings):
     module = __import__('depl.deploy', globals(), locals(), [name], -1)
     commands, module_dependencies = module.load(settings, package_manager)
 
     for dep in module_dependencies:
-        yield dep
+        yield 'sudo %s %s' % (pkg_install, _dependency_lookup(dep))
     for cmd in commands:
         yield cmd
 
+def _dependency_lookup(name):
+    return dependencies[name]['apt' if name == 'apt-get' else name]
 
-def get_package_manager():
-    result = None
+def _get_package_manager():
     for name in ['apt-get', 'pacman', 'yum']:
         if find_executable(name) is not None:
-            result = name
             break
-    if result is None:
+    else:
         raise NotImplementedError("Didn't find a package manager for your OS.")
-    return result
+    install = ' install' if name != 'pacman' else ' -S'
+    return name, name + install
 
 
 with open(os.path.join(os.path.dirname(__file__), 'dependencies.yml')) as f:
     dependencies = yaml.load(f)
 
-package_manager = get_package_manager()
+package_manager, pkg_install = _get_package_manager()
