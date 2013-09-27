@@ -34,7 +34,8 @@ def main():
         sys.stderr.write("Config file is invalid: " + e.message)
         sys.exit(2)
 
-    if args['deploy']:
-        pass
-    elif args['run']:
-        run('depl run')
+    for pool in c.pools:
+        if args['deploy']:
+            pool.deploy
+        elif args['run']:
+            run('depl run')

@@ -1,0 +1,8 @@
+redis:
+    apt: redis-server
+    pacman: redis
+    yum: redis
+postgresql: 
+    apt: postgresql
+pip: 
+    apt: python-pip
