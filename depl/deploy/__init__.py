@@ -13,13 +13,9 @@ from distutils.spawn import find_executable
 
 import yaml
 
-with open(os.path.join(os.path.dirname(__file__), 'dependencies.yml')) as f:
-    dependencies = yaml.load(f)
-
-
-def load(name):
+def load(name, settings):
     module = __import__('depl.deploy', globals(), locals(), [name], -1)
-    commands, module_dependencies = module.load()
+    commands, module_dependencies = module.load(settings, package_manager)
 
     for dep in module_dependencies:
         yield dep
@@ -36,3 +32,9 @@ def get_package_manager():
     if result is None:
         raise NotImplementedError("Didn't find a package manager for your OS.")
     return result
+
+
+with open(os.path.join(os.path.dirname(__file__), 'dependencies.yml')) as f:
+    dependencies = yaml.load(f)
+
+package_manager = get_package_manager()
