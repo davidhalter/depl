@@ -9,34 +9,52 @@ packages for your package manager.
 """
 
 import os
-from distutils.spawn import find_executable
 
 import yaml
+from fabric.api import run, settings
 
 
 def load(name, settings):
     module = __import__('depl.deploy', globals(), locals(), [name], -1)
-    commands, module_dependencies = module.load(settings, package_manager)
+    commands, module_dependencies = module.load(settings, _Package.system())
 
     for dep in module_dependencies:
-        yield 'sudo %s %s' % (pkg_install, _dependency_lookup(dep))
+        dep_name = dependencies[name][_Package.system()]
+        yield 'sudo %s %s' % (_Package.install(), dep_name)
     for cmd in commands:
         yield cmd
 
-def _dependency_lookup(name):
-    return dependencies[name]['apt' if name == 'apt-get' else name]
 
-def _get_package_manager():
-    for name in ['apt-get', 'pacman', 'yum']:
-        if find_executable(name) is not None:
-            break
-    else:
-        raise NotImplementedError("Didn't find a package manager for your OS.")
-    install = ' install' if name != 'pacman' else ' -S'
-    return name, name + install
+class _Package(object):
+    """Lookup the package manager lazily"""
+    MANAGERS = ['apt-get', 'pacman', 'yum']
+    def __init__(self):
+        self._manager = None
 
+    def install(self):
+        install = ' install' if self.manager != 'pacman' else ' -S'
+        return self.manager + install
+
+    def system(self):
+        return 'apt' if self.manager == 'apt-get' else self.manager
+
+    def manager(self):
+        if self._manager:
+            return self._manager
+        for name in self.MANAGERS:
+            with settings(warn_only=True):
+                # Everything must be run with fabric - otherwise detection is not
+                # possible.
+                result = run('which ' + name)
+                if result.errorcode == 0:
+                    break
+        else:
+            raise NotImplementedError("Didn't find a package manager for your OS.")
+        self._manager = name
+        return name
+
+
+_Package = _Package()
 
 with open(os.path.join(os.path.dirname(__file__), 'dependencies.yml')) as f:
     dependencies = yaml.load(f)
-
-package_manager, pkg_install = _get_package_manager()
