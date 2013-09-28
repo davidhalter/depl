@@ -15,8 +15,8 @@ from fabric.api import run, settings
 
 
 def load(name, settings):
-    module = __import__('depl.deploy', globals(), locals(), [name], -1)
-    commands, module_dependencies = module.load(settings, _Package.system())
+    module = __import__('depl.deploy.' + name, globals(), locals(), [name], -1)
+    module_dependencies, commands = module.load(settings, _Package.system())
 
     for dep in module_dependencies:
         dep_name = dependencies[name][_Package.system()]
