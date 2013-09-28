@@ -32,11 +32,11 @@ class _Package(object):
         self._manager = None
 
     def install(self):
-        install = ' install' if self.manager != 'pacman' else ' -S'
-        return self.manager + install
+        install = ' install' if self.manager() != 'pacman' else ' -S'
+        return self.manager() + install
 
     def system(self):
-        return 'apt' if self.manager == 'apt-get' else self.manager
+        return 'apt' if self.manager() == 'apt-get' else self.manager()
 
     def manager(self):
         if self._manager:
@@ -46,7 +46,7 @@ class _Package(object):
                 # Everything must be run with fabric - otherwise detection is not
                 # possible.
                 result = run('which ' + name)
-                if result.errorcode == 0:
+                if result.return_code == 0:
                     break
         else:
             raise NotImplementedError("Didn't find a package manager for your OS.")
