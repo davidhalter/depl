@@ -16,9 +16,9 @@ Options:
 import sys
 
 import docopt
-from fabric.api import run
 
-import config
+from depl import config
+from depl import hosts
 
 __version__ = '0.0.1'
 
@@ -36,6 +36,6 @@ def main():
 
     for pool in c.pools:
         if args['deploy']:
-            pool.deploy
+            hosts.deploy_pool(pool)
         elif args['run']:
-            run('depl run')
+            hosts.run_in_pool([args['<command>']])
