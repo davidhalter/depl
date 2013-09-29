@@ -10,7 +10,7 @@ matrix:
 install:
     - pip install --quiet --use-mirrors tox
 script:
-    - sudo start ssh
+    - sudo start ssh || echo "SSH service already running"
     - ssh-keygen -t rsa -f ~/.ssh/id_rsa -N "" -q
     - cat ~/.ssh/id_rsa.pub >>~/.ssh/authorized_keys
     - ssh-keyscan -t rsa localhost >>~/.ssh/known_hosts
