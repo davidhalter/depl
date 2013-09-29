@@ -23,12 +23,12 @@ setup(name='depl',
       license='MIT',
       keywords='python deployment fabric',
       long_description=readme,
-      packages=['depl'],
+      packages=['depl', 'depl.deploy'],
       platforms=['any'],
       entry_points={
           'console_scripts': ['depl = depl:main']
       },
-      package_data={'depl': ['grammar.yml']},
+      package_data={'depl': ['grammar.yml'], 'depl.deploy': ['dependencies.yml']},
       install_requires=open('requirements.txt').readlines(),
       classifiers=[
           'Development Status :: 1 - Planning',
