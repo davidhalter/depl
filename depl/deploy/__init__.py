@@ -20,7 +20,7 @@ def load(name, settings):
     module_dependencies, commands = module.load(settings, _Package.system())
 
     for dep in module_dependencies:
-        dep_name = dependencies[name][_Package.system()]
+        dep_name = dependencies[dep][_Package.system()]
         yield 'sudo %s %s' % (_Package.install(), dep_name)
     for cmd in commands:
         yield cmd

@@ -1,3 +1,6 @@
+"""
+Most of the tests for the application are in the ``deploy`` folder.
+"""
 import textwrap
 import subprocess
 import os
@@ -22,7 +25,7 @@ def config_file(code, file_name = "depl.yml"):
             try:
                 print str(tmpdir)
                 os.chdir(str(tmpdir))
-                return func()
+                return func(tmpdir)
             finally:
                 os.chdir(path)
         return wrapper
@@ -36,7 +39,7 @@ def test_no_config():
 
 
 @config_file('a wrong config file')
-def test_wrong_config():
+def test_wrong_config(tmpdir):
     with pytest.raises(subprocess.CalledProcessError) as excinfo:
         run('depl deploy')
     assert excinfo.value.returncode == 2
