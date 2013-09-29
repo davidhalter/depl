@@ -1,7 +1,11 @@
 deploy:
+    - python:
+        id: python
+        url: localhost
+        port: 80
     - django:
         id: django
-        url: 127.0.0.1
+        url: localhost
         port: 80
     - redis:
         id: redis
