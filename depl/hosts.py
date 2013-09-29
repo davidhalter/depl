@@ -1,10 +1,9 @@
 from itertools import chain
 
-from fabric.api import settings
+from fabric.api import settings, run
 from fabric import tasks
 
 from depl import deploy
-from depl.utils import run
 
 
 def deploy_pool(pool):

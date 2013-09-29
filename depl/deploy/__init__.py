@@ -11,9 +11,8 @@ packages for your package manager.
 import os
 
 import yaml
-from fabric.api import settings
+from fabric.api import settings, run
 
-from depl.utils import run
 
 def load(name, settings):
     module = __import__('depl.deploy.' + name, globals(), locals(), [name], -1)
