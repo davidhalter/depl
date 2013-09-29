@@ -208,9 +208,9 @@ class Host(object):
 
 
 class Deploy(object):
-    def __init__(self, name, settings=None):
+    def __init__(self, name, settings):
         self.name = name
-        self.settings = settings or {}
+        self.settings = settings
         self.id = self.settings['id']
 
     def __repr__(self):
