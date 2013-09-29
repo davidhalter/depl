@@ -7,6 +7,7 @@ def run(*args, **kwargs):
     leave it for now - testing reasons. (btw: this should be done by fabric
     anyways, there's a ticket for it)
     """
+    return run_fabric(*args, **kwargs) # todo remove
     if len(env.hosts) and env.hosts[0] in ['localhost', '127.0.0.1']:
         return local(*args, **kwargs)
     else:
