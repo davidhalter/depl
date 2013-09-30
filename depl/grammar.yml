@@ -3,10 +3,12 @@ deploy:
         id: python
         url: localhost
         port: 80
+        wsgi: null
     - django:
         id: django
         url: localhost
         port: 80
+        wsgi: wsgi # wsgi.py
     - redis:
         id: redis
     - postgresql:
