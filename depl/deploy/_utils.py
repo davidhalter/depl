@@ -35,9 +35,6 @@ def install_nginx(nginx_file, id):
 @lazy
 def move_project_to_www(local_path, remote_path):
     sudo('mkdir /var/www || true')
-    user = run('whoami')
-    sudo('chown %s /var/www/' % user)
     sudo('mkdir %s || true')
-    put(local_path, remote_path)
-    sudo('chown %s /var/www/' % user)
-
+    put(local_path, remote_path, use_sudo=True)
+    sudo('chown -R www-data ' + remote_path)
