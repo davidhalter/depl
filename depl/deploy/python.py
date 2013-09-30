@@ -31,7 +31,7 @@ def load(settings, package):
     uwsgi_start_file = _gen_uwsgi_start_file(remote_path)
 
     def install_python():
-        sudo('pip install virtualenv virtualenvwrapper')
+        sudo('pip install virtualenv')
         with cd(remote_path):
             sudo('ls venv || virtualenv venv', user='www-data')
             with prefix('source venv/bin/activate'):
