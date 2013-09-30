@@ -18,7 +18,6 @@ def run_in_pool(pool, commands):
     # @parallel doesn't allow password polling.
     def commands_run(commands):
         for command in commands:
-            # command can be a string or a function
             if isinstance(command, (unicode, str)):
                 run(command)
             else:

@@ -7,5 +7,3 @@ def test_redis_dependencies():
     dependencies, commands = redis.load(redis_settings, deploy._Package)
     assert dependencies == ['redis']
     assert commands == []
-    commands = list(deploy.load('redis', redis_settings))
-    assert len(commands) == 1 and 'redis' in commands[0]

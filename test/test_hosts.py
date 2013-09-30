@@ -13,7 +13,7 @@ def test_run(tmpdir):
 def test_deploy(monkeypatch):
     def mockreturn(pool, commands):
         commands = list(commands)
-        assert len(commands) >= 1 and 'redis' in commands[0]
+        assert len(commands) >= 1
     monkeypatch.setattr(hosts, 'run_in_pool', mockreturn)
 
     pool = config.Pool(None, [config.Host('localhost')],

@@ -11,16 +11,18 @@ packages for your package manager.
 import os
 
 import yaml
-from fabric.api import settings, run
+from fabric.api import settings, run, sudo
 
 
 def load(name, settings):
     module = __import__('depl.deploy.' + name, globals(), locals(), [name], -1)
     module_dependencies, commands = module.load(settings, _Package.system())
 
-    for dep in module_dependencies:
-        dep_name = dependencies[dep][_Package.system()]
-        yield 'sudo %s %s' % (_Package.install(), dep_name)
+    def install_dependencies():
+        for dep in module_dependencies:
+            dep_name = dependencies[dep][_Package.system()]
+            sudo('%s %s' % (_Package.install(), dep_name))
+    yield install_dependencies
     for cmd in commands:
         yield cmd
 
