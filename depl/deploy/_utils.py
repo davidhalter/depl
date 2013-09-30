@@ -17,13 +17,13 @@ def nginx_config(url, port, locations):
             charset     utf-8;
             client_max_body_size 75M;
 
-            %s
+        %s
         }
     """
 
     l = '    location %s {%s}'
     locations = [l % (path, values) for path, values in locations.items()]
-    config_txt = textwrap.dedent(config) % (port, url, locations)
+    config_txt = textwrap.dedent(config) % (port, url, '\n'.join(locations))
     return config_txt
 
 
