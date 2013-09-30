@@ -4,6 +4,7 @@ Most of the tests for the application are in the ``deploy`` folder.
 import textwrap
 import subprocess
 import os
+import shutil
 
 import pytest
 
@@ -30,6 +31,11 @@ def config_file(code, file_name = "depl.yml"):
                 os.chdir(path)
         return wrapper
     return decorator
+
+
+def move_dir_content(from_path, to_path):
+    for file in os.listdir(from_path):
+        shutil.copy(os.path.join(from_path, file), to_path)
 
 
 def test_no_config():

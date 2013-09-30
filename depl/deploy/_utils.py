@@ -22,7 +22,7 @@ def nginx_config(url, port, locations):
 
     l = '    location %s {%s}'
     locations = [l % (path, values) for path, values in locations.items()]
-    config_txt = textwrap.dedent(config) % (url, locations)
+    config_txt = textwrap.dedent(config) % (port, url, locations)
     return config_txt
 
 

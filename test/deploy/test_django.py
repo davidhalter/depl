@@ -8,6 +8,6 @@ from test_main import config_file, run
         - django:
             port: 8888
     ''')
-def test_django(temp):
+def django(temp):
     run('depl deploy localhost')
     assert urllib.urlopen("http://localhost:8888/").getcode() == "django rocks"

@@ -24,6 +24,8 @@ def load(settings, package):
     nginx_conf = nginx_config(settings['url'], settings['port'], locations)
     nginx_file = StringIO(nginx_conf)
 
+    if settings['wsgi'] is None:
+        raise ValueError("wsgi parameter needs to be defined to deploy python") 
     uwsgi_file = _gen_uwsgi_file(settings['wsgi'], remote_path, socket)
 
     uwsgi_start_file = _gen_uwsgi_start_file(remote_path)
