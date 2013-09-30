@@ -1,7 +1,12 @@
 import textwrap
 
-from fabric.api import put, sudo
+from fabric.api import run, put, sudo
 
+
+def lazy(func):
+    def wrapper(*args, **kwargs):
+        return lambda: func(*args, **kwargs)
+    return wrapper
 
 def nginx_config(url, port, locations):
     config = """
@@ -21,8 +26,18 @@ def nginx_config(url, port, locations):
     return config_txt
 
 
-def install_nginx_callable(nginx_file, id):
-    def install_nginx():
-        put(nginx_file, '/etc/nginx/conf.d/depl-%s.conf' % id, use_sudo=True)
-        sudo('/etc/init.d/nginx restart')
-    return install_nginx
+@lazy
+def install_nginx(nginx_file, id):
+    put(nginx_file, '/etc/nginx/conf.d/depl-%s.conf' % id, use_sudo=True)
+    sudo('/etc/init.d/nginx restart')
+
+
+@lazy
+def move_project_to_www(local_path, remote_path):
+    sudo('mkdir /var/www || true')
+    user = run('whoami')
+    sudo('chown %s /var/www/' % user)
+    sudo('mkdir %s || true')
+    put(local_path, remote_path)
+    sudo('chown %s /var/www/' % user)
+
