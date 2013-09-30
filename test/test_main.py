@@ -5,8 +5,19 @@ import textwrap
 import subprocess
 import os
 import shutil
+import sys
 
 import pytest
+
+from depl import main
+from depl import config
+
+
+def main_run(args):
+    config._recursion_paths = []
+    old, sys.argv = sys.argv, args
+    main()
+    sys.argv = old
 
 
 def run(cmd):

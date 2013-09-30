@@ -54,7 +54,7 @@ def load(settings, package):
         setup_uwsgi,
         install_nginx(nginx_file, settings['id']),
     ]
-    return ['pip', 'uwsgi-build-tools'], commands
+    return ['pip', 'uwsgi-build-tools', 'nginx'], commands
 
 
 def _gen_uwsgi_file(wsgi_file, remote_path, socket):

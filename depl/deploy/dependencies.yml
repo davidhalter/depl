@@ -8,3 +8,5 @@ postgresql:
     apt: postgresql
 pip: 
     apt: python-pip
+nginx: 
+    apt: nginx
