@@ -18,7 +18,11 @@ def run_in_pool(pool, commands):
     # @parallel doesn't allow password polling.
     def commands_run(commands):
         for command in commands:
-            run(command)
+            # command can be a string or a function
+            if isinstance(command, (unicode, str)):
+                run(command)
+            else:
+                command()
 
     hosts = [h.identifier for h in pool.hosts]
     passwords = dict((host.identifier, host.password) for host in pool.hosts

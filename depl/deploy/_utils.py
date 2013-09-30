@@ -1,4 +1,5 @@
 import textwrap
+from os.path import join
 
 from fabric.api import run, put, sudo
 
@@ -35,6 +36,6 @@ def install_nginx(nginx_file, id):
 @lazy
 def move_project_to_www(local_path, remote_path):
     sudo('mkdir /var/www || true')
-    sudo('mkdir %s || true')
-    put(local_path, remote_path, use_sudo=True)
-    sudo('chown -R www-data ' + remote_path)
+    sudo('mkdir %s || true' % remote_path)
+    put(join(local_path, '*'), remote_path, use_sudo=True)
+    sudo('chown -R www-data:www-data ' + remote_path)

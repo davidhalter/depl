@@ -1,9 +1,9 @@
 import os
-from io import StringIO
+from StringIO import StringIO
 import textwrap
 
-from fabric.api import put, sudo, run
-from fabric.context_managers import cd
+from fabric.api import put, sudo
+from fabric.context_managers import cd, prefix
 
 from depl.deploy._utils import nginx_config, install_nginx, move_project_to_www
 
@@ -31,20 +31,21 @@ def load(settings, package):
     uwsgi_start_file = _gen_uwsgi_start_file(remote_path)
 
     def install_python():
-        sudo('pip install virtualenv')
+        sudo('pip install virtualenv virtualenvwrapper')
         with cd(remote_path):
-            run('virtualenv venv')
-            run('source venv/bin/activate')
-            run('pip install -r requirements.txt')
-
-            run('pip install uwsgi')
-            run('deactivate')
+            sudo('ls venv || virtualenv venv', user='www-data')
+            with prefix('source venv/bin/activate'):
+                sudo('pip install -r requirements.txt', user='www-data')
+                sudo('pip install uwsgi', user='www-data')
 
     def setup_uwsgi():
         sudo('mkdir /etc/uwsgi && mkdir /etc/uwsgi/vassals || true')
+        #logs
+        sudo('mkdir /var/log/uwsgi || true')
+        sudo('chown -R www-data:www-data /var/log/uwsgi')
 
-        put(uwsgi_file, '/etc/uwsgi/vassals/depl-%s.ini' % settings['id'])
-        put(uwsgi_start_file, '/etc/init/uwsgi')
+        put(uwsgi_file, '/etc/uwsgi/vassals/depl-%s.ini' % settings['id'], use_sudo=True)
+        put(uwsgi_start_file, '/etc/init/uwsgi.conf', use_sudo=True)
         sudo('service uwsgi restart')
 
     commands = [
@@ -53,7 +54,7 @@ def load(settings, package):
         setup_uwsgi,
         install_nginx(nginx_file, settings['id']),
     ]
-    return ['pip'], commands
+    return ['pip', 'uwsgi-build-tools'], commands
 
 
 def _gen_uwsgi_file(wsgi_file, remote_path, socket):
@@ -80,7 +81,7 @@ def _gen_uwsgi_file(wsgi_file, remote_path, socket):
     callable = app
 
     #location of log files
-    logto = /var/log/uwsgi-%n.log
+    logto = /var/log/uwsgi/%n.log
 
     uid = www-data
     gid = www-data
@@ -98,7 +99,7 @@ def _gen_uwsgi_start_file(remote_path):
     respawn
 
     env UWSGI=%s
-    env LOGTO=/var/log/uwsgi-emperor.log
+    env LOGTO=/var/log/uwsgi/emperor.log
 
     exec $UWSGI --master --emperor /etc/uwsgi/vassals --die-on-term --uid www-data --gid www-data --logto $LOGTO
     """ % (remote_path + '/venv/bin/uwsgi')

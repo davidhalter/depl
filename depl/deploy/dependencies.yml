@@ -2,6 +2,8 @@ redis:
     apt: redis-server
     pacman: redis
     yum: redis
+uwsgi-build-tools:
+    apt: build-essential python-dev
 postgresql: 
     apt: postgresql
 pip: 
