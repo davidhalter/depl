@@ -34,7 +34,14 @@ class _Package(object):
         self._manager = None
 
     def install(self):
-        install = ' install' if self.manager() != 'pacman' else ' -S'
+        man = self.manager()
+        if man == 'pacman':
+            install = ' -S '
+        elif man == 'yum':
+            install = ' install '
+        elif man == 'apt-get':
+            # always say yes - no prompts!
+            install = ' install -y '
         return self.manager() + install
 
     def system(self):
