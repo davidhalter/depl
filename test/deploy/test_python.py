@@ -8,7 +8,7 @@ from test_main import config_file, move_dir_content, main_run
     deploy:
         - python:
             port: 8888
-            wsgi: hello
+            wsgi: hello:app
     ''')
 def test_flask_simple(tempdir):
     flask_path = join(dirname(abspath(__file__)), 'sample', 'flask')

@@ -8,7 +8,7 @@ deploy:
         id: django
         url: localhost
         port: 80
-        wsgi: wsgi # wsgi.py
+        wsgi: null # project/wsgi.py will be searched.
     - redis:
         id: redis
     - postgresql:

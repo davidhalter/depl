@@ -13,4 +13,4 @@ def test_django(tempdir):
     flask_path = join(dirname(abspath(__file__)), 'sample', 'django_test')
     move_dir_content(flask_path, str(tempdir))
     main_run(['depl', 'deploy', 'localhost'])
-    assert urllib.urlopen("http://localhost:8887/").read() == "django rocks"
+    assert urllib.urlopen("http://localhost:8887/").read() == "django rocks\n"
