@@ -6,6 +6,7 @@ deploy:
         wsgi: null
     - django:
         id: django
+        settings: settings
         url: localhost
         port: 80
         wsgi: null # project/wsgi.py will be searched.
