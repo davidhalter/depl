@@ -32,7 +32,7 @@ def load(settings, package):
         with cd(remote_path):
             with prefix('source venv/bin/activate'):
                 put(StringIO(depl_settings), 'depl_settings.py')
-                run('django-admin.py collectstatic --settings=depl_settings --pythonpath .')
+                run('django-admin.py collectstatic --noinput --settings=depl_settings --pythonpath .')
 
     dependencies, commands = python.load(settings, package)
     return dependencies, commands + [django_stuff]
