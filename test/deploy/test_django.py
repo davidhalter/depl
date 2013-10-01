@@ -13,7 +13,7 @@ def django_basic_test(tempdir):
     txt = urllib.urlopen("http://localhost:8887/static/something.txt").read()
     assert txt == "static files\n"
     # django plays with the db
-    assert urllib.urlopen("http://localhost:8887/db.html").read() == "django rocks\n"
+    assert urllib.urlopen("http://localhost:8887/db.html").read() == "saved\n"
 
 
 @config_file('''
@@ -21,8 +21,10 @@ def django_basic_test(tempdir):
         - django:
             port: 8887
     ''')
-def test_django(tempdir):
+def test_django_sqlite(tempdir):
     django_basic_test(tempdir)
+    content =  urllib.urlopen("http://localhost:8887/db.html").read()
+    assert content == 'django.db.backends.sqlite3: 1'
 
 
 @config_file('''
@@ -35,5 +37,8 @@ def test_django(tempdir):
             port: 8887
             settings: django_test.settings_with_db
     ''')
-def test_django_with_db(tempdir):
+def test_django_pg(tempdir):
     django_basic_test(tempdir)
+    # django plays with the db
+    content = urllib.urlopen("http://localhost:8887/db.html").read()
+    assert content == 'django.db.backends.psycopg2: 1'
