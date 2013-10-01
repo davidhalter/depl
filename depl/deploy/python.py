@@ -14,7 +14,8 @@ def load(settings, package):
 
     # python projects should always have a 'requirements.txt'.
     if not os.path.exists(os.path.join(local_path, 'requirements.txt')):
-        raise LookupError("requirements.txt doesn't exist in your Python project.")
+        raise LookupError("requirements.txt doesn't exist in your Python project (%s)."
+                           % local_path)
 
     # configure nginx
     socket = remote_path + '/uwsgi.sock'
