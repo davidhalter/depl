@@ -4,7 +4,7 @@ from os.path import exists
 import re
 
 from depl.deploy import python
-from fabric.api import run, cd, prefix, put
+from fabric.api import run, cd, prefix, put, sudo
 
 
 def load(settings, package):
@@ -14,11 +14,11 @@ def load(settings, package):
     settings_module = settings['settings']
     if settings_module is None:
         with open('manage.py') as f:
-            m = re.search('''["']DJANGO_SETTINGS_MODULE['"], (["'][\d\w_.]["'])''',
+            m = re.search('''["']DJANGO_SETTINGS_MODULE['"], ["']([\d\w_.]+)["']''',
                          f.read())
             if not m:
                 raise LookupError("manage.py doesn't have a settings module defined")
-            m.groups()[0]
+            settings_module = m.groups()[0]
 
     remote_path = '/var/www/depl-' + settings['id']
 
@@ -27,12 +27,15 @@ def load(settings, package):
 
     STATIC_ROOT = 'depl-staticfiles'
     """ % settings_module)
+    settings['static'] = {'/static': 'depl-staticfiles'}
 
     def django_stuff():
         with cd(remote_path):
+            put(StringIO(depl_settings), 'depl_settings.py', use_sudo=True)
+            sudo('chown www-data:www-data depl_settings.py')
             with prefix('source venv/bin/activate'):
-                put(StringIO(depl_settings), 'depl_settings.py')
-                run('django-admin.py collectstatic --noinput --settings=depl_settings --pythonpath .')
+                sudo('django-admin.py collectstatic --noinput --pythonpath . '
+                     '--settings=depl_settings ', user='www-data')
 
     dependencies, commands = python.load(settings, package)
     return dependencies, commands + [django_stuff]

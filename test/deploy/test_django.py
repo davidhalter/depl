@@ -14,3 +14,6 @@ def test_django(tempdir):
     move_dir_content(flask_path, str(tempdir))
     main_run(['depl', 'deploy', 'localhost'])
     assert urllib.urlopen("http://localhost:8887/").read() == "django rocks\n"
+
+    txt = urllib.urlopen("http://localhost:8887/static/something.txt").read()
+    assert txt == "static files\n"

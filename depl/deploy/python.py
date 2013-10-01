@@ -22,6 +22,10 @@ def load(settings, package):
     uwsgi_nginx = "include uwsgi_params; uwsgi_pass unix:%s;" % socket
 
     locations = {'/': uwsgi_nginx}
+    if 'static' in settings:
+        for url, path in settings['static'].items():
+            locations[url] = 'alias %s;' % os.path.join(remote_path, path)
+
     nginx_conf = nginx_config(settings['url'], settings['port'], locations)
     nginx_file = StringIO(nginx_conf)
 
