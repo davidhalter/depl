@@ -4,7 +4,7 @@ from os.path import exists
 import re
 
 from depl.deploy import python
-from fabric.api import run, cd, prefix, put, sudo
+from fabric.api import cd, prefix, put, sudo
 
 
 def load(settings, package):
@@ -34,7 +34,11 @@ def load(settings, package):
             put(StringIO(depl_settings), 'depl_settings.py', use_sudo=True)
             sudo('chown www-data:www-data depl_settings.py')
             with prefix('source venv/bin/activate'):
+                # collectstatic
                 sudo('django-admin.py collectstatic --noinput --pythonpath . '
+                     '--settings=depl_settings ', user='www-data')
+                # syncdb
+                sudo('django-admin.py syncdb --pythonpath . '
                      '--settings=depl_settings ', user='www-data')
 
     dependencies, commands = python.load(settings, package)
