@@ -25,9 +25,21 @@ def load(settings, package):
     nginx_conf = nginx_config(settings['url'], settings['port'], locations)
     nginx_file = StringIO(nginx_conf)
 
-    if settings['wsgi'] is None:
-        raise ValueError("wsgi parameter needs to be defined to deploy python") 
-    uwsgi_file = _gen_uwsgi_file(settings['wsgi'], remote_path, socket)
+    wsgi_path = settings['wsgi']
+    if wsgi_path is None:
+        # search for a file in the project named "wsgi"
+        for root, dirnames, filenames in os.walk('.'):
+            if not os.path.basename(root).startswith('.'):
+                for filename in filenames:
+                    if filename == 'wsgi.py':
+                        p = os.path.join(root, filename)[2:-3]
+                        wsgi_path = p.replace(os.path.sep, '.')
+                        break
+                if wsgi_path:
+                    break
+        else:
+            raise ValueError('WSGI path not set and no file named wsgi.py in the project found')
+    uwsgi_file = _gen_uwsgi_file(wsgi_path, remote_path, socket)
 
     uwsgi_start_file = _gen_uwsgi_start_file(remote_path)
 
@@ -76,10 +88,7 @@ def _gen_uwsgi_file(wsgi_file, remote_path, socket):
     socket = {2}
 
     #permissions for the socket file
-    chmod-socket    = 666
-
-    #the variable that holds a flask application inside the module imported at line #6
-    callable = app
+    chmod-socket    = 644
 
     #location of log files
     logto = /var/log/uwsgi/%n.log
