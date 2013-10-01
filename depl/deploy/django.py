@@ -38,7 +38,7 @@ def load(settings, package):
                 sudo('django-admin.py collectstatic --noinput --pythonpath . '
                      '--settings=depl_settings ', user='www-data')
                 # syncdb
-                sudo('django-admin.py syncdb --pythonpath . '
+                sudo('django-admin.py syncdb --noinput --pythonpath . '
                      '--settings=depl_settings ', user='www-data')
 
     dependencies, commands = python.load(settings, package)

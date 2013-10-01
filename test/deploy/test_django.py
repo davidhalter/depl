@@ -29,7 +29,7 @@ def test_django_sqlite(tempdir):
 
 @config_file('''
     deploy:
-        - postgres:
+        - postgresql:
             database: depl
             user: depl
             password: depl
