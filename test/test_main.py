@@ -46,7 +46,11 @@ def config_file(code, file_name = "depl.yml"):
 
 def move_dir_content(from_path, to_path):
     for file in os.listdir(from_path):
-        shutil.copy(os.path.join(from_path, file), to_path)
+        path = os.path.join(from_path, file)
+        if os.path.isdir(path):
+            shutil.copytree(path, os.path.join(to_path, file))
+        else:
+            shutil.copy(path, to_path)
 
 
 def test_no_config():
