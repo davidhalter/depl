@@ -30,7 +30,7 @@ def django_basic_test(tempdir):
 def test_django_sqlite(tempdir):
     django_basic_test(tempdir)
     content =  urllib.urlopen("http://localhost:8887/db_show.html").read()
-    assert content == 'django.db.backends.sqlite3: 1'
+    assert content == 'django.db.backends.sqlite3: 1\n'
 
 
 @config_file('''
@@ -48,5 +48,5 @@ def test_django_pg(tempdir):
     django_basic_test(tempdir)
     # django plays with the db
     content = urllib.urlopen("http://localhost:8887/db_show.html").read()
-    assert content == 'django.db.backends.psycopg2: 1'
+    assert content == 'django.db.backends.psycopg2: 1\n'
     delete_pg_connection()

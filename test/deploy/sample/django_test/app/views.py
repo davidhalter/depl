@@ -16,8 +16,8 @@ def db_add(request):
 
 def db_show(request):
     cars = models.Car.objects.all()
-    number = cars.length()
+    number = len(cars)
     cars.delete()
-    engine = settings.DATABASES['default']['engine']
+    engine = settings.DATABASES['default']['ENGINE']
     context = {'content': '%s: %s' %(engine, number)}
     return render_to_response('content.html', context)
