@@ -41,8 +41,8 @@ class _Package(object):
             install = ' install {0}'
         elif man == 'apt-get':
             # dpkg checks first if it's already installed
-            # always say yes (-y) - no prompts!
-            return 'dpkg -s {0} 2>/dev/null >/dev/null || ' + man + ' install -y {0}'
+            # -q -> quiet, always say yes (-y) - no prompts!
+            return 'dpkg -s {0} 2>/dev/null >/dev/null || ' + man + ' -q install -y {0}'
         return man + install
 
     def system(self):
