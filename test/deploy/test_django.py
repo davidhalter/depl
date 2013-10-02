@@ -1,7 +1,15 @@
 import urllib
+import psycopg2
 
 from os.path import join, abspath, dirname
 from test_main import config_file, main_run, move_dir_content
+
+
+def delete_pg_connection():
+    conn = psycopg2.connect("dbname='depl' user='depl' host='localhost' password='depl'")
+    cur = conn.cursor()
+    cur.execute("""DROP USER depl; DROP OWNED BY depl""")
+    cur.execute("""DROP DATABASE depl;""")
 
 
 def django_basic_test(tempdir):
@@ -13,7 +21,7 @@ def django_basic_test(tempdir):
     txt = urllib.urlopen("http://localhost:8887/static/something.txt").read()
     assert txt == "static files\n"
     # django plays with the db
-    assert urllib.urlopen("http://localhost:8887/db.html").read() == "saved\n"
+    assert urllib.urlopen("http://localhost:8887/db_add.html").read() == "saved\n"
 
 
 @config_file('''
@@ -23,7 +31,7 @@ def django_basic_test(tempdir):
     ''')
 def test_django_sqlite(tempdir):
     django_basic_test(tempdir)
-    content =  urllib.urlopen("http://localhost:8887/db.html").read()
+    content =  urllib.urlopen("http://localhost:8887/db_show.html").read()
     assert content == 'django.db.backends.sqlite3: 1'
 
 
@@ -38,7 +46,9 @@ def test_django_sqlite(tempdir):
             settings: django_test.settings_with_db
     ''')
 def test_django_pg(tempdir):
+    print "I am unable to connect to the database"
     django_basic_test(tempdir)
     # django plays with the db
-    content = urllib.urlopen("http://localhost:8887/db.html").read()
+    content = urllib.urlopen("http://localhost:8887/db_show.html").read()
     assert content == 'django.db.backends.psycopg2: 1'
+    delete_pg_connection()
