@@ -57,8 +57,8 @@ def load(settings, package):
                      '--settings=depl_settings ', user='www-data')
 
     dependencies, commands = python.load(settings, package)
-    db_auto_detect(settings['id'], settings_module)
-    return dependencies, commands + [django_stuff]
+    add_commands = db_auto_detect(settings['id'], settings_module)
+    return dependencies, add_commands + commands + [django_stuff]
 
 
 def db_auto_detect(django_id, settings_module):
