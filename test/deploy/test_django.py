@@ -1,4 +1,5 @@
 import urllib
+
 import psycopg2
 
 from os.path import join, abspath, dirname
