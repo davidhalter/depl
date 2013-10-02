@@ -1,16 +1,13 @@
 import urllib
 
-import psycopg2
-
 from os.path import join, abspath, dirname
 from test_main import config_file, main_run, move_dir_content
+from fabric.api import local
 
 
 def delete_pg_connection():
-    conn = psycopg2.connect("dbname='depl' user='depl' host='localhost' password='depl'")
-    cur = conn.cursor()
-    cur.execute("""DROP USER depl; DROP OWNED BY depl""")
-    cur.execute("""DROP DATABASE depl;""")
+    local("""sudo -u postgres psql -c "DROP DATABASE depl;" """)
+    local("""sudo -u postgres psql -c "DROP USER depl;" """)
 
 
 def django_basic_test(tempdir):

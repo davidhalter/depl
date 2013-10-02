@@ -13,7 +13,7 @@ def load(settings, package):
 
     create_user = textwrap.dedent("""
     CREATE USER {user} WITH PASSWORD '{password}';
-    GRANT ALL PRIVILEGES ON DATABASE '{database}' to {user};
+    GRANT ALL PRIVILEGES ON DATABASE {database} to {user};
     """).format(**settings)
 
     def setup_user():

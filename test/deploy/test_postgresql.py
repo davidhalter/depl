@@ -1,10 +1,9 @@
 import pytest
 
-import psycopg2
-
 from depl import deploy
 from depl.deploy import postgresql as pg
-from test_main import config_file
+from test_main import config_file, main_run
+from fabric.api import local as local
 
 
 def test_postgres_dependencies():
@@ -19,10 +18,8 @@ def test_postgres_dependencies():
 
 
 def delete_pg_connection():
-    conn = psycopg2.connect("dbname='depl' user='depl' host='localhost' password='depl'")
-    cur = conn.cursor()
-    cur.execute("""DROP USER depl; DROP OWNED BY depl""")
-    cur.execute("""DROP DATABASE depl;""")
+    local("""sudo -u postgres psql -c "DROP DATABASE depl;" """)
+    local("""sudo -u postgres psql -c "DROP USER depl;" """)
 
 
 @config_file('''
@@ -33,5 +30,6 @@ def delete_pg_connection():
             password: depl
     ''')
 def test_postgres(tempdir):
+    main_run(['depl', 'deploy', 'localhost'])
     # delete it again - this is the test (if it has been created)
     delete_pg_connection()
