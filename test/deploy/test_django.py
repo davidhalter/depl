@@ -21,6 +21,13 @@ def django_basic_test(tempdir):
     # django plays with the db
     assert urllib.urlopen("http://localhost:8887/db_add.html").read() == "saved\n"
 
+def django_pg_test(tempdir):
+    django_basic_test(tempdir)
+    # django plays with the db
+    content = urllib.urlopen("http://localhost:8887/db_show.html").read()
+    assert content == 'django.db.backends.postgresql_psycopg2: 1\n'
+    delete_pg_connection()
+
 
 @config_file('''
     deploy:
@@ -44,9 +51,14 @@ def test_django_sqlite(tempdir):
             settings: django_test.settings_with_db
     ''')
 def test_django_pg(tempdir):
-    print "I am unable to connect to the database"
-    django_basic_test(tempdir)
-    # django plays with the db
-    content = urllib.urlopen("http://localhost:8887/db_show.html").read()
-    assert content == 'django.db.backends.postgresql_psycopg2: 1\n'
-    delete_pg_connection()
+    django_pg_test(tempdir)
+
+
+@config_file('''
+    deploy:
+        - django:
+            port: 8887
+            settings: django_test.settings_with_db
+    ''')
+def test_auto_db_detection(tempdir):
+    django_pg_test(tempdir)
