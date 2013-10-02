@@ -21,15 +21,15 @@ def load(settings, package):
                 raise LookupError("manage.py doesn't have a settings module defined")
             settings_module = m.groups()[0]
 
-    remote_path = '/var/www/depl-' + settings['id']
+    remote_path = '/var/www/depl_' + settings['id']
 
     # static files
     depl_settings = textwrap.dedent("""
     from %s import *
 
-    STATIC_ROOT = 'depl-staticfiles'
+    STATIC_ROOT = 'depl_staticfiles'
     """ % settings_module)
-    settings['static'] = {'/static': 'depl-staticfiles'}
+    settings['static'] = {'/static': 'depl_staticfiles'}
 
     # wsgi - use the right settings
     wsgi_file = python.search_wsgi(settings)
