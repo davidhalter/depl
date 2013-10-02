@@ -18,6 +18,7 @@ def load(settings, package):
 
     db_exists = "select datname from pg_catalog.pg_database where datname='%s'"
     user_exists = "select usename from pg_catalog.pg_user where usename='%s'"
+    alter_password = "ALTER ROLE {user} WITH PASSWORD '{password}';"
 
     def setup_user():
         def psql_command(sql):
@@ -31,4 +32,6 @@ def load(settings, package):
             psql_command(create_db)
         if no_result(user_exists % settings['user']):
             psql_command(create_user)
+        else:
+            psql_command(alter_password.format(**settings))
     return ['postgresql'], [setup_user]
