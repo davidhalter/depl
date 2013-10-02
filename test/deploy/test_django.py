@@ -48,5 +48,5 @@ def test_django_pg(tempdir):
     django_basic_test(tempdir)
     # django plays with the db
     content = urllib.urlopen("http://localhost:8887/db_show.html").read()
-    assert content == 'django.db.backends.psycopg2: 1\n'
+    assert content == 'django.db.backends.postgresql_psycopg2: 1\n'
     delete_pg_connection()
