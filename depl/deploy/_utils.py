@@ -1,7 +1,7 @@
 import textwrap
 from os.path import join
 
-from fabric.api import run, put, sudo
+from fabric.api import put, sudo
 
 
 def lazy(func):

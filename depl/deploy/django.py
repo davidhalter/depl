@@ -1,10 +1,13 @@
+import json
 from StringIO import StringIO
 import textwrap
 from os.path import exists
 import re
 
+from depl import deploy
 from depl.deploy import python
-from fabric.api import cd, prefix, put, sudo
+from depl.config import Deploy
+from fabric.api import cd, prefix, put, sudo, warn_only, local
 
 
 def load(settings, package):
@@ -55,3 +58,47 @@ def load(settings, package):
 
     dependencies, commands = python.load(settings, package)
     return dependencies, commands + [django_stuff]
+
+
+def db_auto_detect(django_id, settings_module):
+    def get_deploys():
+        count = 0
+        for name, db_settings in json.loads(json_str):
+            engine = db_settings['ENGINE']
+            if 'psycopg2' not in engine:
+                # for now only postgresql is supported
+                continue
+
+            if db_settings['HOST']:
+                db_settings['HOST']
+            if db_settings['HOST'] not in ['localhost', '127.0.0.1', '']:
+                # only localhost autodetection allowed (everything else doesn't
+                # make sense)
+                continue
+            if db_settings['PORT']:
+                # Port settings not yet supported
+                continue
+
+            settings = {
+                'id': 'auto_dectect_%s_%s' % (django_id, count),
+                'database': db_settings['NAME'],
+                'user': db_settings['USER'],
+                'password': db_settings['PASSWORD']
+            }
+            yield Deploy('postgresql', settings)
+            count += 1
+
+    with warn_only():
+        json_str = local('python -c "import json;'
+                         'from %s import *;'
+                         'print(json.dumps(DATABASES))"' % settings_module)
+        if json_str.failed:
+            return [], []
+
+    dependencies, commands = [], []
+    for deploy_obj in get_deploys():
+        dep, cmd = deploy.load(deploy_obj.name, deploy_obj.settings)
+        dependencies += dep
+        commands += cmd
+
+    return dependencies, commands
