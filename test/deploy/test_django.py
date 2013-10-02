@@ -1,11 +1,8 @@
 import urllib
 
-from depl import config
-from depl.deploy import django
 from os.path import join, abspath, dirname
 from test_main import config_file, main_run, move_dir_content
-from fabric.api import local, settings
-from fabric import tasks
+from fabric.api import local
 
 
 def delete_pg_connection():
@@ -19,7 +16,7 @@ def copy_to_temp(tmpdir):
 
 
 def django_basic_test(tmpdir):
-    copy_to_temp()
+    copy_to_temp(tmpdir)
     main_run(['depl', 'deploy', 'localhost'])
     assert urllib.urlopen("http://localhost:8887/").read() == "django rocks\n"
 
@@ -71,14 +68,4 @@ def test_django_pg(tmpdir):
     ''')
 
 def test_pg_auto_detection(tmpdir):
-    copy_to_temp(tmpdir)
-    c = config.Config('depl.yml', None, None)
-    deploy_settings = c.pools[0].deploy[0].settings
-    def run():
-        dependencies, commands = django.load(deploy_settings, None)
-        print commands
-        assert 'postgresql' in dependencies
-    with settings(hosts=['localhost']):
-        tasks.execute(run)
-
     django_pg_test(tmpdir)
