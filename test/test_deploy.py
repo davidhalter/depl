@@ -11,8 +11,5 @@ def test_package_manager_stuff():
         result = tasks.execute(deploy._Package.system)
         assert result[host] in ['apt', 'yum', 'pacman']
 
-        result = tasks.execute(deploy._Package.install)
-        assert result[host] in ['apt-get install -y ', 'yum install ', 'pacman -S ']
-
         result = tasks.execute(deploy._Package.manager)
         assert result[host] in ['apt-get', 'yum', 'pacman']

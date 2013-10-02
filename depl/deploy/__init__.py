@@ -40,9 +40,10 @@ class _Package(object):
         elif man == 'yum':
             install = ' install '
         elif man == 'apt-get':
-            # always say yes - no prompts!
-            install = ' install -y '
-        return self.manager() + install
+            # dpkg checks first if it's already installed
+            # always say yes (-y) - no prompts!
+            return 'dpkg -s postgresql 2>/dev/null >/dev/null || ' + man + ' install -y '
+        return man + install
 
     def system(self):
         return 'apt' if self.manager() == 'apt-get' else self.manager()
