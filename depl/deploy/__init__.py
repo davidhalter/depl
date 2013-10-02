@@ -21,7 +21,7 @@ def load(name, settings):
     def install_dependencies():
         for dep in module_dependencies:
             dep_name = dependencies[dep][_Package.system()]
-            sudo('%s %s' % (_Package.install(), dep_name))
+            sudo(_Package.install().format(dep_name))
     yield install_dependencies
     for cmd in commands:
         yield cmd
@@ -36,13 +36,13 @@ class _Package(object):
     def install(self):
         man = self.manager()
         if man == 'pacman':
-            install = ' -S '
+            install = ' -S {0}'
         elif man == 'yum':
-            install = ' install '
+            install = ' install {0}'
         elif man == 'apt-get':
             # dpkg checks first if it's already installed
             # always say yes (-y) - no prompts!
-            return 'dpkg -s postgresql 2>/dev/null >/dev/null || ' + man + ' install -y '
+            return 'dpkg -s {0} 2>/dev/null >/dev/null || ' + man + ' install -y {0}'
         return man + install
 
     def system(self):
