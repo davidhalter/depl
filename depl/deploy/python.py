@@ -35,12 +35,12 @@ def load(settings, package):
     uwsgi_start_file = _gen_uwsgi_start_file(remote_path)
 
     def install_python():
-        sudo('pip install virtualenv')
+        sudo('pip -q install virtualenv')
         with cd(remote_path):
             sudo('ls venv || virtualenv venv', user='www-data')
             with prefix('source venv/bin/activate'):
-                sudo('pip install -r requirements.txt', user='www-data')
-                sudo('pip install uwsgi', user='www-data')
+                sudo('pip -q install -r requirements.txt', user='www-data')
+                sudo('pip -q install uwsgi', user='www-data')
 
     def setup_uwsgi():
         sudo('mkdir /etc/uwsgi && mkdir /etc/uwsgi/vassals || true')
