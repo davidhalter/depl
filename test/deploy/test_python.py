@@ -10,8 +10,8 @@ from test_main import config_file, move_dir_content, main_run
             port: 8888
             wsgi: hello:app
     ''')
-def test_flask_simple(tempdir):
+def test_flask_simple(tmpdir):
     flask_path = join(dirname(abspath(__file__)), 'sample', 'flask')
-    move_dir_content(flask_path, str(tempdir))
+    move_dir_content(flask_path, str(tmpdir))
     main_run(['depl', 'deploy', 'localhost'])
     assert urllib.urlopen("http://localhost:8888/").read() == "Hello World!"

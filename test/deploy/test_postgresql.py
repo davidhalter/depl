@@ -29,7 +29,7 @@ def delete_pg_connection():
             user: depl
             password: depl
     ''')
-def test_postgres(tempdir):
+def test_postgres(tmpdir):
     main_run(['depl', 'deploy', 'localhost'])
     # delete it again - this is the test (if it has been created)
     delete_pg_connection()
