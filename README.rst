@@ -82,3 +82,10 @@ Additional Ideas
 
 .. _article: http://jedidjah.ch/code/2013/10/
 .. _fabric: https://github.com/fabric/fabric
+
+
+Contributing
+------------
+
+Read `CONTRIBUTING.md 
+<https://github.com/davidhalter/jedi/blob/master/CONTRIBUTING.md>`_!

@@ -29,7 +29,7 @@ def nginx_config(url, port, locations):
 
 @lazy
 def install_nginx(nginx_file, id):
-    put(nginx_file, '/etc/nginx/conf.d/depl-%s.conf' % id, use_sudo=True)
+    put(nginx_file, '/etc/nginx/conf.d/depl_%s.conf' % id, use_sudo=True)
     sudo('/etc/init.d/nginx restart')
 
 

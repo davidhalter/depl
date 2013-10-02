@@ -9,7 +9,7 @@ from depl.deploy._utils import nginx_config, install_nginx, move_project_to_www
 
 
 def load(settings, package):
-    remote_path = '/var/www/depl-' + settings['id']
+    remote_path = '/var/www/depl_' + settings['id']
     local_path = os.path.abspath('.')
 
     # python projects should always have a 'requirements.txt'.
@@ -48,7 +48,7 @@ def load(settings, package):
         sudo('mkdir /var/log/uwsgi || true')
         sudo('chown -R www-data:www-data /var/log/uwsgi')
 
-        put(uwsgi_file, '/etc/uwsgi/vassals/depl-%s.ini' % settings['id'], use_sudo=True)
+        put(uwsgi_file, '/etc/uwsgi/vassals/depl_%s.ini' % settings['id'], use_sudo=True)
         put(uwsgi_start_file, '/etc/init/uwsgi.conf', use_sudo=True)
         sudo('service uwsgi restart')
 
