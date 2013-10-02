@@ -29,20 +29,7 @@ def load(settings, package):
     nginx_conf = nginx_config(settings['url'], settings['port'], locations)
     nginx_file = StringIO(nginx_conf)
 
-    wsgi_path = settings['wsgi']
-    if wsgi_path is None:
-        # search for a file in the project named "wsgi"
-        for root, dirnames, filenames in os.walk('.'):
-            if not os.path.basename(root).startswith('.'):
-                for filename in filenames:
-                    if filename == 'wsgi.py':
-                        p = os.path.join(root, filename)[2:-3]
-                        wsgi_path = p.replace(os.path.sep, '.')
-                        break
-                if wsgi_path:
-                    break
-        else:
-            raise ValueError('WSGI path not set and no file named wsgi.py in the project found')
+    wsgi_path = search_wsgi(settings)
     uwsgi_file = _gen_uwsgi_file(wsgi_path, remote_path, socket)
 
     uwsgi_start_file = _gen_uwsgi_start_file(remote_path)
@@ -118,3 +105,20 @@ def _gen_uwsgi_start_file(remote_path):
     exec $UWSGI --master --emperor /etc/uwsgi/vassals --die-on-term --uid www-data --gid www-data --logto $LOGTO
     """ % (remote_path + '/venv/bin/uwsgi')
     return StringIO(textwrap.dedent(auto_start))
+
+def search_wsgi(settings):
+    wsgi_path = settings['wsgi']
+    if wsgi_path is None:
+        # search for a file in the project named "wsgi"
+        for root, dirnames, filenames in os.walk('.'):
+            if not os.path.basename(root).startswith('.'):
+                for filename in filenames:
+                    if filename == 'wsgi.py':
+                        p = os.path.join(root, filename)[2:-3]
+                        wsgi_path = p.replace(os.path.sep, '.')
+                        break
+                if wsgi_path:
+                    break
+        else:
+            raise ValueError('WSGI path not set and no file named wsgi.py in the project found')
+    return wsgi_path
