@@ -95,7 +95,7 @@ def db_auto_detect(django_id, settings_module):
                          'print(json.dumps(DATABASES))"' % settings_module,
                          capture=True)
         if json_str.failed:
-            return [], []
+            return []
 
     commands = []
     for deploy_obj in get_deploys(json_str):

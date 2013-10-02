@@ -111,7 +111,7 @@ def search_wsgi(settings):
     if wsgi_path is None:
         # search for a file in the project named "wsgi"
         for root, dirnames, filenames in os.walk('.'):
-            if not os.path.basename(root).startswith('.'):
+            if root == '.' or not os.path.basename(root).startswith('.'):
                 for filename in filenames:
                     if filename == 'wsgi.py':
                         p = os.path.join(root, filename)[2:-3]
