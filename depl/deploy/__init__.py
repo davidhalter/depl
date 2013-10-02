@@ -9,6 +9,7 @@ packages for your package manager.
 """
 
 import os
+from datetime import datetime
 
 import yaml
 from fabric.api import settings, run, sudo
@@ -19,6 +20,7 @@ def load(name, settings):
     module_dependencies, commands = module.load(settings, _Package.system())
 
     def install_dependencies():
+        _Package.run_update()
         for dep in module_dependencies:
             dep_name = dependencies[dep][_Package.system()]
             sudo(_Package.install().format(dep_name))
@@ -62,6 +64,16 @@ class _Package(object):
             raise NotImplementedError("Didn't find a package manager for your OS.")
         self._manager = name
         return name
+
+    def run_update(self):
+        if self.system() == 'apt':
+            timestamp = run('stat -c %Y /var/lib/apt/periodic/update-success-stamp')
+            date = datetime.fromtimestamp(int(timestamp))
+            if (datetime.now() - date).days > 1:
+                # update unless the package info is older
+                sudo('apt-get -q update')
+        else:
+            raise NotImplementedError()
 
 
 _Package = _Package()
