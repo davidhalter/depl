@@ -61,7 +61,7 @@ def load(settings, package):
 
 
 def db_auto_detect(django_id, settings_module):
-    def get_deploys():
+    def get_deploys(json_str):
         count = 0
         for name, db_settings in json.loads(json_str):
             engine = db_settings['ENGINE']
@@ -96,7 +96,7 @@ def db_auto_detect(django_id, settings_module):
             return [], []
 
     dependencies, commands = [], []
-    for deploy_obj in get_deploys():
+    for deploy_obj in get_deploys(json_str):
         dep, cmd = deploy.load(deploy_obj.name, deploy_obj.settings)
         dependencies += dep
         commands += cmd
