@@ -57,13 +57,14 @@ def load(settings, package):
                      '--settings=depl_settings ', user='www-data')
 
     dependencies, commands = python.load(settings, package)
+    db_auto_detect(settings['id'], settings_module)
     return dependencies, commands + [django_stuff]
 
 
 def db_auto_detect(django_id, settings_module):
     def get_deploys(json_str):
         count = 0
-        for name, db_settings in json.loads(json_str):
+        for name, db_settings in json.loads(json_str).items():
             engine = db_settings['ENGINE']
             if 'psycopg2' not in engine:
                 # for now only postgresql is supported
@@ -91,14 +92,12 @@ def db_auto_detect(django_id, settings_module):
     with warn_only():
         json_str = local('python -c "import json;'
                          'from %s import *;'
-                         'print(json.dumps(DATABASES))"' % settings_module)
+                         'print(json.dumps(DATABASES))"' % settings_module,
+                         capture=True)
         if json_str.failed:
             return [], []
 
-    dependencies, commands = [], []
+    commands = []
     for deploy_obj in get_deploys(json_str):
-        dep, cmd = deploy.load(deploy_obj.name, deploy_obj.settings)
-        dependencies += dep
-        commands += cmd
-
-    return dependencies, commands
+        commands += deploy.load(deploy_obj.name, deploy_obj.settings)
+    return commands
