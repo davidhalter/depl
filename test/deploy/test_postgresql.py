@@ -13,7 +13,7 @@ def test_postgres_dependencies():
 
     pg_settings = {'user': 'user', 'database': 'db', 'password': 'pw'}
     dependencies, commands = pg.load(pg_settings, deploy._Package)
-    assert dependencies == ['postgresql']
+    assert dependencies == set(['postgresql'])
     assert len(commands) == 1
 
 

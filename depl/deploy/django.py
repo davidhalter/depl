@@ -58,7 +58,7 @@ def load(settings, package):
 
     dependencies, commands = python.load(settings, package)
     add_dep, add_commands = db_auto_detect(settings['id'], settings_module)
-    return dependencies + add_dep, add_commands + commands + [django_stuff]
+    return dependencies | add_dep, add_commands + commands + [django_stuff]
 
 
 def db_auto_detect(django_id, settings_module):
