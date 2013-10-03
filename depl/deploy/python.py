@@ -75,6 +75,7 @@ def _gen_uwsgi_file(wsgi_file, remote_path, socket):
     app = {1}
     module = %(app)
 
+    chdir = %(base)
     home = %(base)/venv
     pythonpath = %(base)
 
