@@ -53,8 +53,10 @@ def load(settings, package):
                 sudo('django-admin.py collectstatic --noinput --pythonpath . '
                      '--settings=depl_settings ', user='www-data')
                 # syncdb (also do a migrate if something needs to be migrated)
-                sudo('django-admin.py syncdb --noinput --pythonpath . '
-                     '--settings=depl_settings --migrate', user='www-data')
+                c = 'django-admin.py syncdb --noinput --pythonpath . --settings=depl_settings'
+                # sometimes migrate is not available...
+                sudo(c + ' --migrate || ' + c, 
+                     user='www-data')
 
             # Restart both uwsgi & nginx, they might need it. But in the future
             # we could order the commands better.
