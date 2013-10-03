@@ -12,7 +12,7 @@ import os
 from datetime import datetime
 
 import yaml
-from fabric.api import settings, run, sudo
+from fabric.api import settings, run, sudo, warn_only
 
 
 def load(name, settings):
@@ -67,9 +67,11 @@ class _Package(object):
 
     def run_update(self):
         if self.system() == 'apt':
-            timestamp = run('stat -c %Y /var/lib/apt/periodic/update-success-stamp')
-            date = datetime.fromtimestamp(int(timestamp))
-            if (datetime.now() - date).days > 1:
+            with warn_only():
+                timestamp = run('stat -c %Y /var/lib/apt/periodic/update-success-stamp')
+                if timestamp.succeeded:
+                    date = datetime.fromtimestamp(int(timestamp))
+            if timestamp.failed or (datetime.now() - date).days > 1:
                 # update unless the package info is older
                 sudo('apt-get -q update')
         else:
