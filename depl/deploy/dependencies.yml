@@ -4,6 +4,8 @@ redis:
     yum: redis
 uwsgi-build-tools:
     apt: build-essential python-dev
+psycopg2-build-tools:
+    apt: libpq-dev python-dev
 postgresql: 
     apt: postgresql
 pip: 

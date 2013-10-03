@@ -57,8 +57,8 @@ def load(settings, package):
                      '--settings=depl_settings ', user='www-data')
 
     dependencies, commands = python.load(settings, package)
-    add_commands = db_auto_detect(settings['id'], settings_module)
-    return dependencies, add_commands + commands + [django_stuff]
+    add_dep, add_commands = db_auto_detect(settings['id'], settings_module)
+    return dependencies + add_dep, add_commands + commands + [django_stuff]
 
 
 def db_auto_detect(django_id, settings_module):
@@ -86,7 +86,7 @@ def db_auto_detect(django_id, settings_module):
                 'user': db_settings['USER'],
                 'password': db_settings['PASSWORD']
             }
-            yield Deploy('postgresql', settings)
+            yield 'psycopg2-build-tools', Deploy('postgresql', settings)
             count += 1
 
     with warn_only():
@@ -95,9 +95,11 @@ def db_auto_detect(django_id, settings_module):
                          'print(json.dumps(DATABASES))"' % settings_module,
                          capture=True)
         if json_str.failed:
-            return []
+            return [], []
 
     commands = []
-    for deploy_obj in get_deploys(json_str):
+    dependencies = set()
+    for dependency, deploy_obj in get_deploys(json_str):
         commands += deploy.load(deploy_obj.name, deploy_obj.settings)
-    return commands
+        dependencies.add(dependency)
+    return dependencies, commands

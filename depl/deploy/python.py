@@ -106,6 +106,7 @@ def _gen_uwsgi_start_file(remote_path):
     """ % (remote_path + '/venv/bin/uwsgi')
     return StringIO(textwrap.dedent(auto_start))
 
+
 def search_wsgi(settings):
     wsgi_path = settings['wsgi']
     if wsgi_path is None:
