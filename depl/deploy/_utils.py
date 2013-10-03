@@ -30,6 +30,8 @@ def nginx_config(url, port, locations):
 @lazy
 def install_nginx(nginx_file, id):
     put(nginx_file, '/etc/nginx/conf.d/depl_%s.conf' % id, use_sudo=True)
+    # remove the default configuration
+    sudo('rm /etc/nginx/sites-enabled/default || true')
     sudo('/etc/init.d/nginx restart')
 
 
