@@ -39,6 +39,9 @@ def load(settings, package):
         with cd(remote_path):
             sudo('ls venv || virtualenv venv', user='www-data')
             with prefix('source venv/bin/activate'):
+                # maybe need the latest setuptools (some packages might require
+                # it)
+                #sudo('pip -q install -r --upgrade setuptools', user='www-data')
                 sudo('pip -q install -r requirements.txt', user='www-data')
                 sudo('pip -q install uwsgi', user='www-data')
 

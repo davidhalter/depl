@@ -52,9 +52,14 @@ def load(settings, package):
                 # collectstatic
                 sudo('django-admin.py collectstatic --noinput --pythonpath . '
                      '--settings=depl_settings ', user='www-data')
-                # syncdb
+                # syncdb (also do a migrate if something needs to be migrated)
                 sudo('django-admin.py syncdb --noinput --pythonpath . '
-                     '--settings=depl_settings ', user='www-data')
+                     '--settings=depl_settings --migrate', user='www-data')
+
+            # Restart both uwsgi & nginx, they might need it. But in the future
+            # we could order the commands better.
+            sudo('service uwsgi restart')
+            sudo('service nginx restart')
 
     dependencies, commands = python.load(settings, package)
     add_dep, add_commands = db_auto_detect(settings['id'], settings_module)
