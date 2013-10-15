@@ -43,6 +43,10 @@ def load(settings, package):
     """) % wsgi_file
     settings['wsgi'] = 'depl_wsgi'
 
+    def django_cmd(cmd):
+        return 'django-admin.py %s --noinput --pythonpath . ' \
+                '--settings=depl_settings ' % cmd
+
     def django_stuff():
         with cd(remote_path):
             put(StringIO(depl_settings), 'depl_settings.py', use_sudo=True)
@@ -50,13 +54,11 @@ def load(settings, package):
             sudo('chown www-data:www-data depl_settings.py')
             with prefix('source venv/bin/activate'):
                 # collectstatic
-                sudo('django-admin.py collectstatic --noinput --pythonpath . '
-                     '--settings=depl_settings ', user='www-data')
+                sudo(django_cmd('collectstatic'), user='www-data')
                 # syncdb (also do a migrate if something needs to be migrated)
-                c = 'django-admin.py syncdb --noinput --pythonpath . --settings=depl_settings'
+                c = django_cmd('syncdb')
                 # sometimes migrate is not available...
-                sudo(c + ' --migrate || ' + c, 
-                     user='www-data')
+                sudo(c + ' --migrate || ' + c, user='www-data')
 
             # Restart both uwsgi & nginx, they might need it. But in the future
             # we could order the commands better.
