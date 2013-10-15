@@ -1,3 +1,4 @@
+import os
 import textwrap
 
 from fabric.api import put, sudo
@@ -38,6 +39,14 @@ def install_nginx(nginx_file, id):
 @lazy
 def move_project_to_www(local_path, remote_path):
     sudo('mkdir /var/www || true')
-    sudo('mkdir %s || true' % remote_path)
-    upload_project(local_path, remote_path, use_sudo=True)
+    depl_tmp = '/var/www/tmp_depl'
+    sudo('mkdir %s || true' % depl_tmp)
+    upload_project(local_path, depl_tmp, use_sudo=True)
+    _, local_name = os.path.split(local_path)
+    # delete all the files in the target directory that are also in the source
+    # directory and move the source.
+    sudo('ls -A {from_p} | xargs -I [] sh -c '
+         '"rm -rf {to_p}/[] || true; mv {from_p}/[] {to_p}"'.format(
+         from_p=os.path.join(depl_tmp, local_name), to_p=remote_path))
+    sudo('rm -rf %s' % depl_tmp)
     sudo('chown -R www-data:www-data ' + remote_path)
