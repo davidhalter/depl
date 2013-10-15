@@ -43,9 +43,16 @@ def load(settings, package):
     """) % wsgi_file
     settings['wsgi'] = 'depl_wsgi'
 
-    def django_cmd(cmd):
-        return 'django-admin.py %s --noinput --pythonpath . ' \
-                '--settings=depl_settings ' % cmd
+    def django_cmd(cmd, no_input=True):
+        no_input = '--noinput' if no_input else ''
+        return 'django-admin.py %s %s --pythonpath . ' \
+                '--settings=depl_settings ' % (cmd, no_input)
+
+    user = settings['admin']['user']
+    if user is not None:
+        email = settings['admin']['email']
+        if email is None:
+            raise ValueError('Admin email must be provided.')
 
     def django_stuff():
         with cd(remote_path):
@@ -59,6 +66,11 @@ def load(settings, package):
                 c = django_cmd('syncdb')
                 # sometimes migrate is not available...
                 sudo(c + ' --migrate || ' + c, user='www-data')
+
+                if user:
+                    cmd = django_cmd('createsuperuser', no_input=False)
+                    sudo(cmd + " --username '%s' --email '%s' || true"
+                         % (user, email))
 
             # Restart both uwsgi & nginx, they might need it. But in the future
             # we could order the commands better.

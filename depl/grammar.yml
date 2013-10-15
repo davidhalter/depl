@@ -8,6 +8,9 @@ deploy:
         id: django
         settings: null  # depl searches it automatically - typically project.settings
         url: localhost
+        admin:
+            user: null
+            email: null
         port: 80
         wsgi: null # project/wsgi.py will be searched.
     - redis:
