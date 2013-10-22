@@ -89,3 +89,21 @@ Contributing
 
 Read `CONTRIBUTING.md 
 <https://github.com/davidhalter/jedi/blob/master/CONTRIBUTING.md>`_!
+
+
+Testing
+-------
+
+Testing ``depl`` correctly involves a lot of integration testing. Therefore I
+recommend you to use a virtual machine for testing. Alternatively you can just
+create a pull request, which travis automatically tests.
+
+``depl`` will open a lot of ports and testing might even create security holes
+on your computer - so really - use a VM.
+
+You can run tests like this::
+
+    sudo pip install tox
+    sudo aptitude install libpq-dev
+
+    tox
