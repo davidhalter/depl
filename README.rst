@@ -104,6 +104,6 @@ on your computer - so really - use a VM.
 You can run tests like this::
 
     sudo pip install tox
-    sudo aptitude install libpq-dev
+    sudo aptitude install libpq-dev python-dev
 
     tox
