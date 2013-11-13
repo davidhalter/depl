@@ -16,3 +16,7 @@ def test_flask_simple(tmpdir):
     move_dir_content(flask_path, str(tmpdir))
     main_run(['depl', 'deploy', 'localhost'])
     assert requests.get("http://localhost:8888/").text == "Hello World!"
+    # ipv4
+    assert requests.get("http://127.0.0.1:8888/").text == "Hello World!"
+    # ipv6
+    assert requests.get("http://[::1]:8888/").text == "Hello World!"
