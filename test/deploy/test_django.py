@@ -1,8 +1,9 @@
-import urllib
-
 from os.path import join, abspath, dirname
-from test_main import config_file, main_run, move_dir_content
+
 from fabric.api import local
+import requests
+
+from test_main import config_file, main_run, move_dir_content
 
 
 def delete_pg_connection():
@@ -18,18 +19,18 @@ def copy_to_temp(tmpdir):
 def django_basic_test(tmpdir):
     copy_to_temp(tmpdir)
     main_run(['depl', 'deploy', 'localhost'])
-    assert urllib.urlopen("http://localhost:8887/").read() == "django rocks\n"
+    assert requests.get("http://localhost:8887/").text == "django rocks\n"
 
-    txt = urllib.urlopen("http://localhost:8887/static/something.txt").read()
+    txt = requests.get("http://localhost:8887/static/something.txt").text
     assert txt == "static files\n"
     # django plays with the db
-    assert urllib.urlopen("http://localhost:8887/db_add.html").read() == "saved\n"
+    assert requests.get("http://localhost:8887/db_add.html").text == "saved\n"
 
 
 def django_pg_test(tmpdir):
     django_basic_test(tmpdir)
     # django plays with the db
-    content = urllib.urlopen("http://localhost:8887/db_show.html").read()
+    content = requests.get("http://localhost:8887/db_show.html").text
     assert content == 'django.db.backends.postgresql_psycopg2: 1\n'
     delete_pg_connection()
 
@@ -42,7 +43,7 @@ def django_pg_test(tmpdir):
     ''')
 def test_django_sqlite(tmpdir):
     django_basic_test(tmpdir)
-    content =  urllib.urlopen("http://localhost:8887/db_show.html").read()
+    content = requests.get("http://localhost:8887/db_show.html").text
     assert content == 'django.db.backends.sqlite3: 1\n'
 
 
@@ -66,6 +67,5 @@ def test_django_pg(tmpdir):
             port: 8887
             settings: django_test.settings_with_db
     ''')
-
 def test_pg_auto_detection(tmpdir):
     django_pg_test(tmpdir)
