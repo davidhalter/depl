@@ -19,7 +19,7 @@ def load(settings, package):
     if settings_module is None:
         with open('manage.py') as f:
             m = re.search('''["']DJANGO_SETTINGS_MODULE['"], ["']([\d\w_.]+)["']''',
-                         f.read())
+                          f.read())
             if not m:
                 raise LookupError("manage.py doesn't have a settings module defined")
             settings_module = m.groups()[0]
@@ -46,7 +46,7 @@ def load(settings, package):
     def django_cmd(cmd, no_input=True):
         no_input = '--noinput' if no_input else ''
         return 'django-admin.py %s %s --pythonpath . ' \
-                '--settings=depl_settings ' % (cmd, no_input)
+            '--settings=depl_settings ' % (cmd, no_input)
 
     user = settings['admin']['user']
     if user is not None:

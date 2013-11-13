@@ -74,7 +74,7 @@ class Config(object):
         for key, value in self._cnf.items():
             if key not in grammar:
                 raise ValidationError('"%s" is an unkown configuration option'
-                                        % key)
+                                      % key)
 
             a = self._validate_detail(value, grammar[key])
             setattr(self, '_' + key, a)
@@ -96,8 +96,8 @@ class Config(object):
 
             result = []
             # <something> denotes a placeholder (anything)
-            is_placeholder = len(list_dict) == 1 \
-                             and key[0] == '<' and key[-1] == '>'
+            is_placeholder = len(list_dict) == 1 and \
+                key[0] == '<' and key[-1] == '>'
 
             for element in current:
                 if isinstance(element, dict):
@@ -109,7 +109,7 @@ class Config(object):
                         raise ValidationError('Key %s not found in grammar'
                                               % k)
                     defaults = list_dict.values()[0] if is_placeholder \
-                               else list_dict[k]
+                        else list_dict[k]
                     el = self._validate_detail(value, defaults)
                     defaults = dict(defaults)
                     defaults.update(el)
@@ -132,8 +132,8 @@ class Config(object):
                 raise ValidationError("dict found: %s but %s expected. "
                                       % (current, grammar))
 
-            is_placeholder = len(grammar) == 1 and grammar.keys()[0][0] == '<' \
-                             and grammar.keys()[0][-1] == '>'
+            is_placeholder = len(grammar) == 1 and grammar.keys()[0][0] == '<'\
+                and grammar.keys()[0][-1] == '>'
             result = {}
             for k, value in current.items():
                 if k not in grammar and not is_placeholder:
@@ -172,8 +172,6 @@ class Config(object):
                 yield Deploy(deploy)
 
     def _process_pools(self):
-        hosts = self._hosts
-        deploys = self._deploy
         def get_ids(ids, objects, is_host=False):
             for obj in objects:
                 for id in ids:
@@ -182,12 +180,14 @@ class Config(object):
                 if not ids:
                     yield obj
 
+        hosts = self._hosts
+        deploys = self._deploy
         result = []
         for id, pool in self._pools:
             if self._pool_option not in (id, None):
                 continue
             result.append(Pool(id, list(get_ids(pool['hosts'], hosts, True)),
-                                   list(get_ids(pool['deploy'], deploys))))
+                               list(get_ids(pool['deploy'], deploys))))
         if self._pool_option and not result:
             raise KeyError("Didn't find the pool '%s'." % self._pool_option)
         if not self._pools:

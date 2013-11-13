@@ -10,6 +10,7 @@ def lazy(func):
         return lambda: func(*args, **kwargs)
     return wrapper
 
+
 def nginx_config(url, port, locations):
     config = """
         server {
@@ -47,7 +48,7 @@ def move_project_to_www(local_path, remote_path):
     # directory and move the source.
     sudo('mkdir %s || true' % remote_path)
     sudo('ls -A {from_p} | xargs -I [] sh -c '
-         '"rm -rf {to_p}/[] || true; mv {from_p}/[] {to_p}"'.format(
-         from_p=os.path.join(depl_tmp, local_name), to_p=remote_path))
+         '"rm -rf {to_p}/[] || true; mv {from_p}/[] {to_p}"'
+         .format(from_p=os.path.join(depl_tmp, local_name), to_p=remote_path))
     sudo('rm -rf %s' % depl_tmp)
     sudo('chown -R www-data:www-data ' + remote_path)

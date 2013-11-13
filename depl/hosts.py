@@ -25,6 +25,6 @@ def run_in_pool(pool, commands):
 
     hosts = [h.identifier for h in pool.hosts]
     passwords = dict((host.identifier, host.password) for host in pool.hosts
-                                              if host.password is not None)
+                     if host.password is not None)
     with settings(hosts=hosts, passwords=passwords):
         tasks.execute(commands_run, commands)

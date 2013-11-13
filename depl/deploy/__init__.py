@@ -32,6 +32,7 @@ def load(name, settings):
 class _Package(object):
     """Lookup the package manager lazily"""
     MANAGERS = ['apt-get', 'pacman', 'yum']
+
     def __init__(self):
         self._manager = None
 
@@ -55,8 +56,8 @@ class _Package(object):
             return self._manager
         for name in self.MANAGERS:
             with settings(warn_only=True):
-                # Everything must be run with fabric - otherwise detection is not
-                # possible.
+                # Everything must be run with fabric - otherwise detection is
+                # not possible.
                 result = run('which ' + name)
                 if result.return_code == 0:
                     break
