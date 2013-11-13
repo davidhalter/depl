@@ -13,7 +13,7 @@ def lazy(func):
 def nginx_config(url, port, locations):
     config = """
         server {
-            listen      %s;
+            listen      [::]:%s;
             server_name %s;
             charset     utf-8;
             client_max_body_size 75M;
