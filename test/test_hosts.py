@@ -6,7 +6,6 @@ def test_run(tmpdir):
     pool = config.Pool(None, [config.Host('localhost')],
                              [config.Deploy('redis', {'id': 'redis'})])
 
-
     hosts.run_in_pool(pool, ['ls'])
 
 

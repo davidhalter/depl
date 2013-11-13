@@ -245,7 +245,7 @@ def test_pool_hosts_param(tmpdir):
     assert len(validate(tmpdir, s).pools) == 2
     pool = validate(tmpdir, s, hosts=['baz'], pool='foo').pools[0]
     assert pool.id == 'foo'
-    assert [s.identifier for s in pool.hosts] == ['baz']
+    assert [h.identifier for h in pool.hosts] == ['baz']
 
 
 def test_hosts_param_with_pool(tmpdir):

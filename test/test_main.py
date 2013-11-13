@@ -28,7 +28,7 @@ def run(cmd):
     return stdout
 
 
-def config_file(code, file_name = "depl.yml"):
+def config_file(code, file_name="depl.yml"):
     def decorator(func):
         def wrapper(tmpdir):
             p = tmpdir.join(file_name)
