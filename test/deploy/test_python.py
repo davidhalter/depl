@@ -1,4 +1,5 @@
 from os.path import dirname, abspath, join
+import sys
 
 import requests
 
@@ -19,4 +20,7 @@ def test_flask_simple(tmpdir):
     # ipv4
     assert requests.get("http://127.0.0.1:8888/").text == "Hello World!"
     # ipv6
-    assert requests.get("http://[::1]:8888/").text == "Hello World!"
+    if sys.version_info[:2] >= (2, 7):
+        # broken stdlib causes this test to not work in py26:
+        # https://github.com/shazow/urllib3/pull/203
+        assert requests.get("http://[::1]:8888/").text == "Hello World!"
