@@ -52,3 +52,30 @@ def move_project_to_www(local_path, remote_path):
          .format(from_p=os.path.join(depl_tmp, local_name), to_p=remote_path))
     sudo('rm -rf %s' % depl_tmp)
     sudo('chown -R www-data:www-data ' + remote_path)
+
+
+@lazy
+def generate_ssl_keys(depl_id):
+    # The whole generation thing is a proof of concept to have ssl running
+    # without a CA. This makes it easier to deploy things the first time.
+    # So keep in mind: This **doesn't protect you against "Man in the Middle"**
+    # attacks!
+    # However it's important that somebody with a security background improves
+    # this.
+    ssl_path = '/etc/nginx/ssl'
+    file_path = '%s/depl_%s' % (ssl_path, depl_id)
+    pass_out = ' -passin pass:depl'
+    pass_in = ' -passin pass:depl'
+    sudo('mkdir %s || true' % ssl_path)
+    # generate key
+    sudo('openssl genrsa -des3 -out {1}.key.orig 1024{2}'
+         .format(file_path, pass_out))
+    # generate certificate signing request
+    sudo('echo -e "\n\n\n\n\n\n\n\n" | '
+         'openssl req -new -key {0}.key.orig -out {0}.csr {1}'
+         .format(file_path, pass_in))
+    # remove password from key
+    sudo('openssl rsa -in {0}.key.orig -out {0}.key {1}'
+         .format(file_path, pass_in))
+    sudo('openssl x509 -req -days 9999 -in {0}.csr -signkey {0}.key -out {0}.crt'
+         .format(file_path))
