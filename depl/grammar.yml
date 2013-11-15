@@ -4,6 +4,10 @@ deploy:
         url: localhost
         port: 80
         wsgi: null
+        ssl: &ssl
+            port: 443
+            certificate: null  # a file path
+            key: null  # a file path
     - django:
         id: django
         settings: null  # depl searches it automatically - typically project.settings
@@ -13,6 +17,7 @@ deploy:
             email: null
         port: 80
         wsgi: null # project/wsgi.py will be searched.
+        ssl: *ssl
     - redis:
         id: redis
     - postgresql:
