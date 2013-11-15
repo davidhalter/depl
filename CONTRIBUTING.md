@@ -6,7 +6,8 @@ Code Guidelines
   rest!.
 - For all generated files use a prefix ``depl_``, so that it's easy to find
   them.
-- Please use PEP8 to style your code.
+- PEP8 for code styling: `flake8 --ignore=E501`
+
 
 Pull Requests
 -------------
