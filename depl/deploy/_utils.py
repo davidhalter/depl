@@ -4,6 +4,9 @@ import textwrap
 from fabric.api import put, sudo
 from fabric.contrib.project import upload_project
 
+SSL_PATH = '/etc/nginx/ssl'
+SSL_FILE_PATH = '%s/depl_%s' % (SSL_PATH, depl_id)
+
 
 def lazy(func):
     def wrapper(*args, **kwargs):
@@ -11,7 +14,7 @@ def lazy(func):
     return wrapper
 
 
-def nginx_config(url, port, locations):
+def nginx_config(settings, locations):
     config = """
         server {
             listen      [::]:%s;
@@ -20,12 +23,28 @@ def nginx_config(url, port, locations):
             client_max_body_size 75M;
 
         %s
+
+        %s
         }
     """
 
+    ssl = settings['ssl']
+
+    add_ssl = """
+    ssl_certificate %s
+    ssl_certificate_key %s
+    """ % (SSL_FILE_PATH + '.crt', SSL_FILE_PATH + '.key')
+
     l = '    location %s {%s}'
     locations = [l % (path, values) for path, values in locations.items()]
-    config_txt = textwrap.dedent(config) % (port, url, '\n'.join(locations))
+    locations = '\n'.join(locations)
+
+    add_http = ''
+    cfgs = (settings['port'], add_http), (ssl['port'] + ' ssl', add_ssl)
+    config_txt = ''
+    for port, add_config in cfgs:
+        config_txt += textwrap.dedent(config) % (port, settings['url'],
+                                                 add_config, locations)
     return config_txt
 
 
@@ -55,27 +74,25 @@ def move_project_to_www(local_path, remote_path):
 
 
 @lazy
-def generate_ssl_keys(depl_id):
+def generate_ssl_keys(depl_id, ssl_config):
     # The whole generation thing is a proof of concept to have ssl running
     # without a CA. This makes it easier to deploy things the first time.
     # So keep in mind: This **doesn't protect you against "Man in the Middle"**
     # attacks!
     # However it's important that somebody with a security background improves
     # this.
-    ssl_path = '/etc/nginx/ssl'
-    file_path = '%s/depl_%s' % (ssl_path, depl_id)
     pass_out = ' -passin pass:depl'
     pass_in = ' -passin pass:depl'
-    sudo('mkdir %s || true' % ssl_path)
+    sudo('mkdir %s || true' % SSL_PATH)
     # generate key
     sudo('openssl genrsa -des3 -out {1}.key.orig 1024{2}'
-         .format(file_path, pass_out))
+         .format(SSL_FILE_PATH, pass_out))
     # generate certificate signing request
     sudo('echo -e "\n\n\n\n\n\n\n\n" | '
          'openssl req -new -key {0}.key.orig -out {0}.csr {1}'
-         .format(file_path, pass_in))
+         .format(SSL_FILE_PATH, pass_in))
     # remove password from key
     sudo('openssl rsa -in {0}.key.orig -out {0}.key {1}'
-         .format(file_path, pass_in))
+         .format(SSL_FILE_PATH, pass_in))
     sudo('openssl x509 -req -days 9999 -in {0}.csr -signkey {0}.key -out {0}.crt'
-         .format(file_path))
+         .format(SSL_FILE_PATH))

@@ -26,7 +26,7 @@ def load(settings, package):
         for url, path in settings['static'].items():
             locations[url] = 'alias %s;' % os.path.join(remote_path, path)
 
-    nginx_conf = nginx_config(settings['url'], settings['port'], locations)
+    nginx_conf = nginx_config(settings, locations)
     nginx_file = StringIO(nginx_conf)
 
     wsgi_path = search_wsgi(settings)
