@@ -411,3 +411,17 @@ def test_extends_recursion(tmpdir):
     with pytest.raises(RuntimeError) as excinfo:
         validate(tmpdir, s1, file_name='extend1.yml')
     assert excinfo.value.message == 'Recursion in depl files.'
+
+
+def test_dictionary_in_dictionary(tmpdir):
+    """Dictionary should be filled with values from grammar file."""
+    s = """
+    deploy:
+      - django:
+          port: 80
+          ssl:
+            port: 444
+    """
+    settings = validate(tmpdir, s).pools[0].deploy[0].settings
+    assert settings['ssl']['port'] == 444
+    assert settings['ssl']['key'] is None
