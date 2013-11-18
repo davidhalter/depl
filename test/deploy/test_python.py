@@ -44,7 +44,8 @@ def test_flask_simple(tmpdir):
             port: 8888
             wsgi: hello:app
             ssl:
-                port: REDIRECT
+                port: 444
+                redirect: http
     ''')
 def test_flask_redirects(tmpdir):
     txt = flask_depl(tmpdir)

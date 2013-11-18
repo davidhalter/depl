@@ -55,15 +55,20 @@ def nginx_config(settings, locations):
     locations = [l % (path, values) for path, values in locations.items()]
     locations = '\n'.join(locations)
 
-    cfgs = (('http', settings['port'], ''),
-            ('https', '%s ssl' % ssl['port'], add_ssl))
+    http_port = settings['port']
+    cfgs = (('http', http_port, '', settings['redirect'], ssl['port']),
+            ('https', '%s ssl' % ssl['port'], add_ssl, ssl['redirect'], http_port))
     config_txt = ''
-    for proto, port, add_config in cfgs:
-        # if port is not set - disable it
+    for proto, port, add_config, redirect, other_port in cfgs:
+        # if port is set to zero - disable it
         if port:
             l = locations
-            if port == 'REDIRECT':
-                l = "    return 301 %s://$host$request_uri;" % proto
+            if redirect is not None:
+                if redirect in ('http', 'https'):
+                    l = "    return 301 %s://$host:%s$request_uri;" \
+                        % (redirect, other_port)
+                else:
+                    l = "    return 301 %s" % redirect
             config_txt += textwrap.dedent(config) % (port, settings['url'],
                                                      add_config, l)
     return config_txt
