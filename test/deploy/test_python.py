@@ -2,6 +2,8 @@ from os.path import dirname, abspath, join
 import sys
 
 import requests
+from requests.exceptions import ConnectionError
+import pytest
 
 from test_main import config_file, move_dir_content, main_run
 
@@ -47,7 +49,7 @@ def test_flask_simple(tmpdir):
                 port: 444
                 redirect: http
     ''')
-def test_flask_redirects(tmpdir):
+def test_flask_redirect(tmpdir):
     txt = flask_depl(tmpdir)
     r = requests.get("http://localhost:8888/")
     assert r.text == txt
@@ -56,3 +58,21 @@ def test_flask_redirects(tmpdir):
     r = requests.get("https://127.0.0.1:444/", verify=False)
     assert r.text == txt
     assert len(r.history) == 1 and r.history[0].status_code == 301
+
+
+@config_file('''
+    deploy:
+        - python:
+            port: 0
+            wsgi: hello:app
+            ssl:
+                port: 444
+    ''')
+def test_flask_http_disabled(tmpdir):
+    txt = flask_depl(tmpdir)
+    with pytest.raises(ConnectionError):
+        requests.get("http://localhost:8888/")
+
+    r = requests.get("https://127.0.0.1:444/", verify=False)
+    assert r.text == txt
+    assert len(r.history) == 0
