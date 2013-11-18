@@ -42,6 +42,9 @@ def nginx_config(settings, locations):
 
     ssl = settings['ssl']
 
+    if bool(ssl['key']) != bool(ssl['certificate']):
+        raise ValueError('SSL certificate given but not key - need both!')
+
     add_ssl = """
     ssl_certificate %s
     ssl_certificate_key %s
@@ -104,6 +107,11 @@ def generate_ssl_keys(depl_id, ssl_config):
     pass_out = ' -passin pass:depl'
     pass_in = ' -passin pass:depl'
     sudo('mkdir %s || true' % SSL_PATH)
+
+    if ssl_config['key']:
+        put(ssl_config['key'], ssl_file_path, use_sudo=True)
+        put(ssl_config['certificate'], ssl_file_path, use_sudo=True)
+
     # generate key
     sudo('openssl genrsa -des3 -out {1}.key.orig 1024{2}'
          .format(ssl_file_path, pass_out))
