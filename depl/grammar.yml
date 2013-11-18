@@ -5,7 +5,7 @@ deploy:
         port: 80  # int|REDIRECT|false
         wsgi: null
         ssl: &ssl
-            port: 443
+            port: 443  # int|REDIRECT|false
             certificate: null  # a file path
             key: null  # a file path
     - django:
