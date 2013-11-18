@@ -47,24 +47,22 @@ def nginx_config(settings, locations):
         raise ValueError('SSL certificate given but not key - need both!')
 
     add_ssl = """
-    ssl_certificate %s
-    ssl_certificate_key %s
+    ssl_certificate %s;
+    ssl_certificate_key %s;
     """ % (ssl_file_path + '.crt', ssl_file_path + '.key')
 
     l = '    location %s {%s}'
     locations = [l % (path, values) for path, values in locations.items()]
     locations = '\n'.join(locations)
 
-    add_http = ''
-    cfgs = (('http', settings['port'], add_http),
-            ('https', ssl['port'] + ' ssl', add_ssl))
+    cfgs = (('http', settings['port'], ''),
+            ('https', '%s ssl' % ssl['port'], add_ssl))
     config_txt = ''
-    for port, add_config in cfgs:
+    for proto, port, add_config in cfgs:
         # if port is not set - disable it
         if port:
             l = locations
             if port == 'REDIRECT':
-                proto = 'https' if add_http else 'http'
                 l = "    return 301 %s://$host$request_uri;" % proto
             config_txt += textwrap.dedent(config) % (port, settings['url'],
                                                      add_config, l)

@@ -5,7 +5,7 @@ import textwrap
 from fabric.api import put, sudo
 from fabric.context_managers import cd, prefix
 
-from depl.deploy._utils import nginx_config, install_nginx, move_project_to_www
+from depl.deploy import _utils
 
 
 def load(settings, package):
@@ -26,7 +26,7 @@ def load(settings, package):
         for url, path in settings['static'].items():
             locations[url] = 'alias %s;' % os.path.join(remote_path, path)
 
-    nginx_conf = nginx_config(settings, locations)
+    nginx_conf = _utils.nginx_config(settings, locations)
     nginx_file = StringIO(nginx_conf)
 
     wsgi_path = search_wsgi(settings)
@@ -56,10 +56,11 @@ def load(settings, package):
         sudo('service uwsgi restart')
 
     commands = [
-        move_project_to_www(local_path, remote_path),
+        _utils.move_project_to_www(local_path, remote_path),
         install_python,
         setup_uwsgi,
-        install_nginx(nginx_file, settings['id']),
+        _utils.generate_ssl_keys(settings['id'], settings['ssl']),
+        _utils.install_nginx(nginx_file, settings['id']),
     ]
     return set(['pip', 'uwsgi-build-tools', 'nginx']), commands
 
