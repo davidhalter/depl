@@ -101,6 +101,8 @@ class Config(object):
 
             for element in current:
                 if isinstance(element, dict):
+                    # dicts in lists are always tuples - they don't have
+                    # multiple entries.
                     if len(element) != 1:
                         raise ValidationError('Dictionary directly in list, %s'
                                               % element)
@@ -111,9 +113,7 @@ class Config(object):
                     defaults = list_dict.values()[0] if is_placeholder \
                         else list_dict[k]
                     el = self._validate_detail(value, defaults)
-                    defaults = dict(defaults)
-                    defaults.update(el)
-                    result.append((k, defaults))
+                    result.append((k, el))
                 elif isinstance(element, list):
                     raise ValidationError('List not expected in list %s' % element)
                 else:
@@ -134,7 +134,7 @@ class Config(object):
 
             is_placeholder = len(grammar) == 1 and grammar.keys()[0][0] == '<'\
                 and grammar.keys()[0][-1] == '>'
-            result = {}
+            result = dict(grammar)  # grammar is also the default
             for k, value in current.items():
                 if k not in grammar and not is_placeholder:
                     raise ValidationError("Key %s is not in grammar." % k)
