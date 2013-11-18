@@ -103,7 +103,7 @@ def generate_ssl_keys(depl_id, ssl_config):
     # attacks!
     # However it's important that somebody with a security background improves
     # this.
-    pass_out = ' -passin pass:depl'
+    pass_out = ' -passout pass:depl'
     pass_in = ' -passin pass:depl'
     sudo('mkdir %s || true' % SSL_PATH)
 
@@ -113,7 +113,7 @@ def generate_ssl_keys(depl_id, ssl_config):
     else:
         if not files.exists(ssl_file_path + '.key'):
             # generate key
-            sudo('openssl genrsa -des3 -out {1}.key.orig 1024{2}'
+            sudo('openssl genrsa -des3 {1} -out {0}.key.orig 1024'
                  .format(ssl_file_path, pass_out))
             # generate certificate signing request
             sudo('echo -e "\n\n\n\n\n\n\n\n" | '
