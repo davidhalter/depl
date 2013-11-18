@@ -14,6 +14,7 @@ import textwrap
 
 from fabric.api import put, sudo
 from fabric.contrib.project import upload_project
+from fabric.contrib import files
 
 SSL_PATH = '/etc/nginx/ssl'
 SSL_FILE_PATH = '%s/depl_%%s' % SSL_PATH
@@ -109,18 +110,20 @@ def generate_ssl_keys(depl_id, ssl_config):
     sudo('mkdir %s || true' % SSL_PATH)
 
     if ssl_config['key']:
-        put(ssl_config['key'], ssl_file_path, use_sudo=True)
-        put(ssl_config['certificate'], ssl_file_path, use_sudo=True)
-
-    # generate key
-    sudo('openssl genrsa -des3 -out {1}.key.orig 1024{2}'
-         .format(ssl_file_path, pass_out))
-    # generate certificate signing request
-    sudo('echo -e "\n\n\n\n\n\n\n\n" | '
-         'openssl req -new -key {0}.key.orig -out {0}.csr {1}'
-         .format(ssl_file_path, pass_in))
-    # remove password from key
-    sudo('openssl rsa -in {0}.key.orig -out {0}.key {1}'
-         .format(ssl_file_path, pass_in))
-    sudo('openssl x509 -req -days 9999 -in {0}.csr -signkey {0}.key -out {0}.crt'
-         .format(ssl_file_path))
+        put(ssl_config['key'], ssl_file_path + '.key', use_sudo=True)
+        put(ssl_config['certificate'], ssl_file_path + '.crt', use_sudo=True)
+    else:
+        if not files.exists(ssl_file_path + '.key'):
+            # generate key
+            sudo('openssl genrsa -des3 -out {1}.key.orig 1024{2}'
+                 .format(ssl_file_path, pass_out))
+            # generate certificate signing request
+            sudo('echo -e "\n\n\n\n\n\n\n\n" | '
+                 'openssl req -new -key {0}.key.orig -out {0}.csr {1}'
+                 .format(ssl_file_path, pass_in))
+            # remove password from key
+            sudo('openssl rsa -in {0}.key.orig -out {0}.key {1}'
+                 .format(ssl_file_path, pass_in))
+        if not files.exists(ssl_file_path + '.crt'):
+            sudo('openssl x509 -req -days 9999 -in {0}.csr -signkey {0}.key -out {0}.crt'
+                 .format(ssl_file_path))
