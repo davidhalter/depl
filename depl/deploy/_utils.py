@@ -101,6 +101,11 @@ def move_project_to_www(local_path, remote_path):
 
 @lazy
 def generate_ssl_keys(depl_id, ssl_config):
+    """
+    Done with the help of
+    https://www.digitalocean.com/community/articles/how-to-create-a-ssl-certificate-on-nginx-for-ubuntu-12-04
+    and some other good influences.
+    """
     ssl_file_path = SSL_FILE_PATH % depl_id
     # The whole generation thing is a proof of concept to have ssl running
     # without a CA. This makes it easier to deploy things the first time.
