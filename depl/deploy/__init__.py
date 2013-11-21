@@ -41,17 +41,17 @@ class AptPackageRepository(_PackageRepository):
 
 class Package(object):
     def __init__(self, package_names, repos=()):
-        self.package_name = package_names
+        self.name = package_names
         self.repos = repos
 
     def __eq__(self, other):
-        return self.package_name == other.package_name
+        return self.name == other.name
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.package_name)
+        return hash(self.name)
 
     def __call__(self):
         """installation call"""
@@ -59,7 +59,7 @@ class Package(object):
             if repo.system == package_manager.system():
                 repo.enable()
 
-        dep_string = dependencies[self.package_name][package_manager.system()]
+        dep_string = dependencies[self.name][package_manager.system()]
         package_manager.install(dep_string)
 
 
