@@ -1,3 +1,6 @@
-def load(settings, package):
+from . import Package
+
+
+def load(settings):
     # redis dependency, no commands
-    return set(['redis']), []
+    return [Package('redis')], []

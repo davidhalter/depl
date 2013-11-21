@@ -10,7 +10,7 @@ from depl.config import Deploy
 from fabric.api import cd, prefix, put, sudo, warn_only, local
 
 
-def load(settings, package):
+def load(settings):
     if not exists('manage.py'):
         raise LookupError('Django projects need a manage.py')
 
@@ -77,7 +77,7 @@ def load(settings, package):
             sudo('service uwsgi restart')
             sudo('service nginx restart')
 
-    dependencies, commands = python.load(settings, package)
+    dependencies, commands = python.load(settings)
     add_dep, add_commands = db_auto_detect(settings['id'], settings_module)
     return dependencies | add_dep, add_commands + commands + [django_stuff]
 

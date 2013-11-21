@@ -16,17 +16,10 @@ from fabric.api import settings, run, sudo, warn_only
 
 
 def load(name, settings):
+    """Returns an iterable of commands to execute - basically callbacks."""
     module = __import__('depl.deploy.' + name, globals(), locals(), [name], -1)
-    module_dependencies, commands = module.load(settings, package_manager.system())
-
-    def install_dependencies():
-        package_manager.run_update()
-        for dep in module_dependencies:
-            dep_name = dependencies[dep][package_manager.system()]
-            sudo(package_manager.install_str().format(dep_name))
-    yield install_dependencies
-    for cmd in commands:
-        yield cmd
+    module_dependencies, commands = module.load(settings)
+    return [package_manager.run_update] + list(module_dependencies) + commands
 
 
 class _PackageRepository(object):
@@ -51,7 +44,17 @@ class Package(object):
         self.package_name = package_names
         self.repos = repos
 
-    def install(self):
+    def __eq__(self, other):
+        return self.package_name == other.package_name
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.package_name)
+
+    def __call__(self):
+        """installation call"""
         for repo in self.repos:
             if repo.system == package_manager.system():
                 repo.enable()

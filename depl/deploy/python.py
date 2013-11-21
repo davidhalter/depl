@@ -6,9 +6,10 @@ from fabric.api import put, sudo
 from fabric.context_managers import cd, prefix
 
 from depl.deploy import _utils
+from . import Package
 
 
-def load(settings, package):
+def load(settings):
     remote_path = '/var/www/depl_' + settings['id']
     local_path = os.path.abspath('.')
 
@@ -62,7 +63,7 @@ def load(settings, package):
         _utils.generate_ssl_keys(settings['id'], settings['ssl']),
         _utils.install_nginx(nginx_file, settings['id']),
     ]
-    return set(['pip', 'uwsgi-build-tools', 'nginx']), commands
+    return set(Package(d) for d in ['pip', 'uwsgi-build-tools', 'nginx']), commands
 
 
 def _gen_uwsgi_file(wsgi_file, remote_path, socket):

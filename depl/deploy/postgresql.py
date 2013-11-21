@@ -2,8 +2,10 @@ import textwrap
 
 from fabric.api import sudo
 
+from . import Package
 
-def load(settings, package):
+
+def load(settings):
     for need in ['user', 'password', 'database']:
         if settings[need] is None:
             raise ValueError('You need to define a %s to deploy postgres.' % need)
@@ -34,4 +36,4 @@ def load(settings, package):
             psql_command(create_user)
         else:
             psql_command(alter_password.format(**settings))
-    return set(['postgresql']), [setup_user]
+    return set([Package('postgresql')]), setup_user
