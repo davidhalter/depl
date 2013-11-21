@@ -17,27 +17,58 @@ from fabric.api import settings, run, sudo, warn_only
 
 def load(name, settings):
     module = __import__('depl.deploy.' + name, globals(), locals(), [name], -1)
-    module_dependencies, commands = module.load(settings, _Package.system())
+    module_dependencies, commands = module.load(settings, package_manager.system())
 
     def install_dependencies():
-        _Package.run_update()
+        package_manager.run_update()
         for dep in module_dependencies:
-            dep_name = dependencies[dep][_Package.system()]
-            sudo(_Package.install().format(dep_name))
+            dep_name = dependencies[dep][package_manager.system()]
+            sudo(package_manager.install_str().format(dep_name))
     yield install_dependencies
     for cmd in commands:
         yield cmd
 
 
-class _Package(object):
+class _PackageRepository(object):
+    def __init__(self, uri, public_key=None):
+        self.uri = uri
+
+    def enable(self):
+        pass
+
+
+class AptPackageRepository(_PackageRepository):
+    system = 'apt'
+
+    def enable(self):
+        package_manager.install('software-properties-common')
+        sudo('add-apt-repository -y ' + self.url)
+        sudo('apt-get update ' + self.url)
+
+
+class Package(object):
+    def __init__(self, package_names, repos=()):
+        self.package_name = package_names
+        self.repos = repos
+
+    def install(self):
+        for repo in self.repos:
+            if repo.system == package_manager.system():
+                repo.enable()
+
+        dep_string = dependencies[self.package_name][package_manager.system()]
+        package_manager.install(dep_string)
+
+
+class _PackageManager(object):
     """Lookup the package manager lazily"""
     MANAGERS = ['apt-get', 'pacman', 'yum']
 
     def __init__(self):
         self._manager = None
 
-    def install(self):
-        man = self.manager()
+    def _install_str(self):
+        man = self._manager()
         if man == 'pacman':
             install = ' -S {0}'
         elif man == 'yum':
@@ -48,10 +79,13 @@ class _Package(object):
             return 'dpkg -s {0} 2>/dev/null >/dev/null || ' + man + ' -q install -y {0}'
         return man + install
 
-    def system(self):
-        return 'apt' if self.manager() == 'apt-get' else self.manager()
+    def install(self, package_str):
+        sudo(self.install_str().format(package_str))
 
-    def manager(self):
+    def system(self):
+        return 'apt' if self._manager() == 'apt-get' else self._manager()
+
+    def _manager(self):
         if self._manager:
             return self._manager
         for name in self.MANAGERS:
@@ -79,7 +113,7 @@ class _Package(object):
             raise NotImplementedError()
 
 
-_Package = _Package()
-
 with open(os.path.join(os.path.dirname(__file__), 'dependencies.yml')) as f:
     dependencies = yaml.load(f)
+
+package_manager = _PackageManager()
