@@ -36,4 +36,4 @@ def load(settings):
             psql_command(create_user)
         else:
             psql_command(alter_password.format(**settings))
-    return set([Package('postgresql')]), setup_user
+    return set([Package('postgresql')]), [setup_user]

@@ -5,6 +5,7 @@ from os.path import exists
 import re
 
 from depl import deploy
+from depl.deploy import Package
 from depl.deploy import python
 from depl.config import Deploy
 from fabric.api import cd, prefix, put, sudo, warn_only, local
@@ -107,7 +108,7 @@ def db_auto_detect(django_id, settings_module):
                 'user': db_settings['USER'],
                 'password': db_settings['PASSWORD']
             }
-            yield 'psycopg2-build-tools', Deploy('postgresql', settings)
+            yield Package('psycopg2-build-tools'), Deploy('postgresql', settings)
             count += 1
 
     with warn_only():

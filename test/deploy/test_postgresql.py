@@ -3,7 +3,6 @@ import pytest
 from fabric.api import local as local
 
 from test_main import config_file, main_run
-from depl import deploy
 from depl.deploy import postgresql as pg
 from depl.deploy import Package
 
@@ -11,10 +10,10 @@ from depl.deploy import Package
 def test_postgres_dependencies():
     pg_settings = {'user': None, 'database': 'db', 'password': 'pw'}
     with pytest.raises(ValueError):
-        pg.load(pg_settings, deploy._Package)
+        pg.load(pg_settings)
 
     pg_settings = {'user': 'user', 'database': 'db', 'password': 'pw'}
-    dependencies, commands = pg.load(pg_settings, deploy._Package)
+    dependencies, commands = pg.load(pg_settings)
     assert dependencies == set([Package('postgresql')])
     assert len(commands) == 1
 

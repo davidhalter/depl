@@ -40,6 +40,10 @@ class AptPackageRepository(_PackageRepository):
 
 
 class Package(object):
+    """
+    Represents a depl package - see ``deploy/dependencies.yml``.
+    Possible to install the package with ``self.__call__``.
+    """
     def __init__(self, package_names, repos=()):
         self.name = package_names
         self.repos = repos
@@ -68,7 +72,7 @@ class _PackageManager(object):
     MANAGERS = ['apt-get', 'pacman', 'yum']
 
     def __init__(self):
-        self._manager = None
+        self.__manager = None
 
     def _install_str(self):
         man = self._manager()
@@ -83,14 +87,14 @@ class _PackageManager(object):
         return man + install
 
     def install(self, package_str):
-        sudo(self.install_str().format(package_str))
+        sudo(self._install_str().format(package_str))
 
     def system(self):
         return 'apt' if self._manager() == 'apt-get' else self._manager()
 
     def _manager(self):
-        if self._manager:
-            return self._manager
+        if self.__manager:
+            return self.__manager
         for name in self.MANAGERS:
             with settings(warn_only=True):
                 # Everything must be run with fabric - otherwise detection is
@@ -100,7 +104,7 @@ class _PackageManager(object):
                     break
         else:
             raise NotImplementedError("Didn't find a package manager for your OS.")
-        self._manager = name
+        self.__manager = name
         return name
 
     def run_update(self):
