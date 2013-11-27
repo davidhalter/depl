@@ -23,11 +23,8 @@ def load(name, settings):
 
 
 class _PackageRepository(object):
-    def __init__(self, uri, public_key=None):
+    def __init__(self, uri):
         self.uri = uri
-
-    def enable(self):
-        pass
 
 
 class AptPackageRepository(_PackageRepository):
