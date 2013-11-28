@@ -22,18 +22,11 @@ def load(name, settings):
     return [package_manager.run_update] + list(module_dependencies) + commands
 
 
-class _PackageRepository(object):
-    def __init__(self, uri):
-        self.uri = uri
-
-
-class AptPackageRepository(_PackageRepository):
-    system = 'apt'
-
-    def enable(self):
-        package_manager.install('software-properties-common')
-        sudo('add-apt-repository -y ' + self.url)
-        sudo('apt-get update ' + self.url)
+def apt_add_repo(repo, pgp):
+    package_manager.install('software-properties-common')
+    sudo('add-apt-repository -y "%s"' % repo)
+    sudo('apt-key adv --keyserver keyserver.ubuntu.com --recv %s' % pgp)
+    sudo('apt-get update')
 
 
 class Package(object):
@@ -41,9 +34,8 @@ class Package(object):
     Represents a depl package - see ``deploy/dependencies.yml``.
     Possible to install the package with ``self.__call__``.
     """
-    def __init__(self, package_names, repos=()):
-        self.name = package_names
-        self.repos = repos
+    def __init__(self, name):
+        self.name = name
 
     def __eq__(self, other):
         return self.name == other.name
@@ -56,11 +48,16 @@ class Package(object):
 
     def __call__(self):
         """installation call"""
-        for repo in self.repos:
-            if repo.system == package_manager.system():
-                repo.enable()
-
         dep_string = dependencies[self.name][package_manager.system()]
+        if isinstance(dep_string, dict):
+            dep_string = dep_string['name']
+            repo = dep_string['repo']
+            pgp = dep_string['pgp']
+            if package_manager.system() == 'apt':
+                apt_add_repo(repo, pgp)
+            else:
+                raise NotImplementedError()
+
         package_manager.install(dep_string)
 
 

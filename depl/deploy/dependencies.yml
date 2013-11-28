@@ -3,7 +3,10 @@ redis:
     pacman: redis
     yum: redis
 mongodb:
-    apt: mongodb-10gen
+    apt: 
+        name: mongodb-10gen
+        repo: "deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen"
+        pgp: 7F0CEB10
 uwsgi-build-tools:
     apt: build-essential python-dev
 psycopg2-build-tools:
