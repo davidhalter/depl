@@ -23,6 +23,8 @@ deploy:
         ssl: *ssl
     - redis:
         id: redis
+    - mongodb:
+        id: mongodb
     - postgresql:
         id: postgresql
         database: null

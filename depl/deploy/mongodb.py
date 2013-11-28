@@ -6,4 +6,4 @@ APT_REPO = \
 
 def load(settings):
     repos = [AptPackageRepository(APT_REPO)]
-    return set([Package('mongodb-10gen', repos)]), []
+    return set([Package('mongodb', repos)]), []

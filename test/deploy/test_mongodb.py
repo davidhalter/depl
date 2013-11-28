@@ -7,8 +7,8 @@ from test_main import config_file, main_run
     deploy:
         - mongodb
     ''')
-def test_simple():
-    main_run()
+def test_simple(tmpdir):
+    main_run(['depl', 'deploy', 'localhost'])
     client = MongoClient()
     db = client.test_database
 

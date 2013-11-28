@@ -2,6 +2,8 @@ redis:
     apt: redis-server
     pacman: redis
     yum: redis
+mongodb:
+    apt: mongodb-10gen
 uwsgi-build-tools:
     apt: build-essential python-dev
 psycopg2-build-tools:
