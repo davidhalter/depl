@@ -14,6 +14,8 @@ from datetime import datetime
 import yaml
 from fabric.api import settings, run, sudo, warn_only
 
+from depl import helpers
+
 
 def load(name, settings):
     """Returns an iterable of commands to execute - basically callbacks."""
@@ -22,9 +24,17 @@ def load(name, settings):
     return [package_manager.run_update] + list(module_dependencies) + commands
 
 
-def apt_add_repo(repo, pgp):
-    package_manager.install('software-properties-common')
-    sudo('add-apt-repository -y "%s"' % repo)
+def _apt_add_repo(repo, pgp=None, no_deb_src=False):
+    if no_deb_src:
+        # annoying case of mongodb, doesn't work with deb-src, so remove it.
+        txt = helpers.read_file('/etc/apt/sources.list')
+        if not repo in txt.splitlines():
+            txt += '\n' + repo
+            helpers.write_file(txt, '/etc/apt/sources.list', True)
+    else:
+        package_manager.install('software-properties-common')
+        sudo('add-apt-repository -y "%s"' % repo)
+
     sudo('apt-key adv --keyserver keyserver.ubuntu.com --recv %s' % pgp)
     sudo('apt-get update')
 
@@ -50,13 +60,13 @@ class Package(object):
         """installation call"""
         dep_string = dependencies[self.name][package_manager.system()]
         if isinstance(dep_string, dict):
-            dep_string = dep_string['name']
             repo = dep_string['repo']
-            pgp = dep_string['pgp']
+            pgp = dep_string.get('pgp')
             if package_manager.system() == 'apt':
-                apt_add_repo(repo, pgp)
+                _apt_add_repo(repo, pgp, dep_string.get('no-deb-src', False))
             else:
                 raise NotImplementedError()
+            dep_string = dep_string['name']
 
         package_manager.install(dep_string)
 

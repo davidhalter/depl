@@ -5,8 +5,9 @@ redis:
 mongodb:
     apt: 
         name: mongodb-10gen
-        repo: "deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen"
+        repo: "deb http://downloads-distro.mongodb.org/repo/debian-sysvinit dist 10gen"
         pgp: 7F0CEB10
+        no-deb-src: true  # mongodb doesn't deliver a deb src
 uwsgi-build-tools:
     apt: build-essential python-dev
 psycopg2-build-tools:
