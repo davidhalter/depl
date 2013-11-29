@@ -25,15 +25,21 @@ def load(name, settings):
 
 
 def _apt_add_repo(repo, pgp=None, no_deb_src=False):
+    APT_PATH = '/etc/apt/sources.list'
+    package_manager.install('software-properties-common')
+    sudo('add-apt-repository -y "%s"' % repo)
     if no_deb_src:
         # annoying case of mongodb, doesn't work with deb-src, so remove it.
-        txt = helpers.read_file('/etc/apt/sources.list')
-        if not repo in txt.splitlines():
-            txt += '\n' + repo
-            helpers.write_file(txt, '/etc/apt/sources.list', True)
-    else:
-        package_manager.install('software-properties-common')
-        sudo('add-apt-repository -y "%s"' % repo)
+        src_repo = 'deb-src' + repo[3:]
+        txt = helpers.read_file(APT_PATH)
+        lines = txt.splitlines()
+        try:
+            del lines[lines.index(src_repo)]
+        except ValueError:
+            pass
+        else:
+            txt = '\n'.join(lines)
+            helpers.write_file(txt, APT_PATH, True)
 
     sudo('apt-key adv --keyserver keyserver.ubuntu.com --recv %s' % pgp)
     sudo('apt-get update')

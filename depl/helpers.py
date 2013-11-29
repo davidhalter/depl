@@ -7,7 +7,7 @@ def read_file(remote_path):
     """Wrapper around fabric's ``get``"""
     sio = StringIO()
     get(remote_path, sio)
-    return sio.read()
+    return sio.getvalue()
 
 
 def write_file(text, remote_path, use_sudo=False):
