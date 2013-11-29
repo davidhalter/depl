@@ -10,13 +10,18 @@ from test_main import config_file, main_run
 def test_simple(tmpdir):
     main_run(['depl', 'deploy', 'localhost'])
     client = MongoClient()
-    db = client.test_database
+    db = client.depl_test_database
 
     post = {
         "author": "Dini Mueter",
         "text": "Schwyzerdeutsch!"
     }
     _id = db.posts.insert(post)
-    from_db = db.posts.find_one()
-    assert from_db['author'] == "Dini Mueter"
-    assert from_db['_id'] == _id
+    try:
+        from_db = db.posts.find_one()
+        assert from_db['author'] == "Dini Mueter"
+        assert from_db['_id'] == _id
+        from_db = db.posts.find_one()
+    finally:
+        db.posts.remove()
+    db.posts.find_one()
