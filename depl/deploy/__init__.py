@@ -13,6 +13,7 @@ from datetime import datetime
 
 import yaml
 from fabric.api import settings, run, sudo, warn_only
+from fabric.context_managers import quiet
 
 from depl import helpers
 
@@ -84,20 +85,24 @@ class _PackageManager(object):
     def __init__(self):
         self.__manager = None
 
-    def _install_str(self):
+    def install(self, package_str):
         man = self._manager()
         if man == 'pacman':
-            install = ' -S {0}'
+            sudo(man + ' -S {0}'.format(package_str))
         elif man == 'yum':
-            install = ' install {0}'
+            sudo(man + ' install {0}'.format(package_str))
         elif man == 'apt-get':
-            # dpkg checks first if it's already installed
-            # -q -> quiet, always say yes (-y) - no prompts!
-            return 'dpkg -s {0} 2>/dev/null >/dev/null || ' + man + ' -q install -y {0}'
-        return man + install
-
-    def install(self, package_str):
-        sudo(self._install_str().format(package_str))
+            install = False
+            with quiet():
+                # Improve the speed by asking dpkg first if package exists
+                # already.
+                output = sudo('dpkg -s {0}'.format(package_str))
+                # sometimes a project is deinstalled - also check that.
+                if output.failed or 'Status: deinstall' in output:
+                    install = True
+            if install:
+                # -q -> quiet, always say yes (-y) - no prompts!
+                sudo(man + ' -q install -y {0}'.format(package_str))
 
     def system(self):
         return 'apt' if self._manager() == 'apt-get' else self._manager()
