@@ -43,7 +43,7 @@ def _apt_add_repo(repo, pgp=None, no_deb_src=False):
             helpers.write_file(txt, APT_PATH, True)
 
     sudo('apt-key adv --keyserver keyserver.ubuntu.com --recv %s' % pgp)
-    sudo('apt-get update')
+    sudo('apt-get -q update')
 
 
 class Package(object):
