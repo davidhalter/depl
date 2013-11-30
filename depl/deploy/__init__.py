@@ -43,7 +43,7 @@ def _apt_add_repo(repo, pgp=None, no_deb_src=False):
             helpers.write_file(txt, APT_PATH, True)
 
     sudo('apt-key adv --keyserver keyserver.ubuntu.com --recv %s' % pgp)
-    sudo('apt-get -q update')
+    package_manager.run_update(force=True)
 
 
 class Package(object):
@@ -122,15 +122,16 @@ class _PackageManager(object):
         self.__manager = name
         return name
 
-    def run_update(self):
+    def run_update(self, force=False):
         if self.system() == 'apt':
-            with warn_only():
-                timestamp = run('stat -c %Y /var/lib/apt/periodic/update-success-stamp')
-                if timestamp.succeeded:
-                    date = datetime.fromtimestamp(int(timestamp))
-            if timestamp.failed or (datetime.now() - date).days > 1:
+            if not force:
+                with warn_only():
+                    timestamp = run('stat -c %Y /var/lib/apt/periodic/update-success-stamp')
+                    if timestamp.succeeded:
+                        date = datetime.fromtimestamp(int(timestamp))
+            if force or timestamp.failed or (datetime.now() - date).days > 1:
                 # update unless the package info is older
-                sudo('apt-get -q update')
+                sudo('apt-get -q update > /dev/null')
         else:
             raise NotImplementedError()
 
