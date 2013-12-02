@@ -97,6 +97,7 @@ class _PackageManager(object):
                 # Improve the speed by asking dpkg first if package exists
                 # already.
                 output = sudo('dpkg -s {0}'.format(package_str))
+                print output
                 # sometimes a project is deinstalled - also check that.
                 if output.failed or 'Status: deinstall' in output:
                     install = True
