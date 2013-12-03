@@ -11,7 +11,7 @@ from . import Package
 
 def load(settings):
     remote_path = '/var/www/depl_' + settings['id']
-    local_path = os.path.abspath('.')
+    local_path = '.'
 
     # python projects should always have a 'requirements.txt'.
     if not os.path.exists(os.path.join(local_path, 'requirements.txt')):
@@ -28,7 +28,6 @@ def load(settings):
             locations[url] = 'alias %s;' % os.path.join(remote_path, path)
 
     nginx_conf = _utils.nginx_config(settings, locations)
-    nginx_file = StringIO(nginx_conf)
 
     wsgi_path = search_wsgi(settings)
     uwsgi_file = _gen_uwsgi_file(wsgi_path, remote_path, socket)
@@ -61,7 +60,7 @@ def load(settings):
         install_python,
         setup_uwsgi,
         _utils.generate_ssl_keys(settings['id'], settings['ssl']),
-        _utils.install_nginx(nginx_file, settings['id']),
+        _utils.install_nginx(nginx_conf, settings['id']),
     ]
     return set(Package(d) for d in ['pip', 'uwsgi-build-tools', 'nginx']), commands
 
@@ -99,6 +98,9 @@ def _gen_uwsgi_file(wsgi_file, remote_path, socket):
 
 
 def _gen_uwsgi_start_file(remote_path):
+    # find a way to make this platform independent - should run on systems
+    # without upstart, too. Not sure if `init.d` scripts would resolve the
+    # issue for upstart/systemd systems.
     auto_start = """
     description "uWSGI"
     start on runlevel [2345]

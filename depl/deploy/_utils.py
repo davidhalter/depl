@@ -11,6 +11,7 @@ protocol. You can also disable the protocol by setting the port number to
 """
 import os
 import textwrap
+from StringIO import StringIO
 
 from fabric.api import put, sudo
 from fabric.contrib.project import upload_project
@@ -75,7 +76,8 @@ def nginx_config(settings, locations):
 
 
 @lazy
-def install_nginx(nginx_file, id):
+def install_nginx(nginx_txt, id):
+    nginx_file = StringIO(nginx_txt)
     put(nginx_file, '/etc/nginx/conf.d/depl_%s.conf' % id, use_sudo=True)
     # remove the default configuration
     sudo('rm /etc/nginx/sites-enabled/default || true')
@@ -84,6 +86,7 @@ def install_nginx(nginx_file, id):
 
 @lazy
 def move_project_to_www(local_path, remote_path):
+    local_path = os.os.path.abspath(local_path)
     sudo('mkdir /var/www || true')
     depl_tmp = '/var/www/tmp_depl'
     sudo('mkdir %s || true' % depl_tmp)

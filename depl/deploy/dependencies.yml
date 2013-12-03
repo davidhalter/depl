@@ -10,7 +10,7 @@ mongodb:
         no-deb-src: true  # mongodb doesn't deliver a deb src
 nodejs:
     apt:
-        name: nodejs npm
+        name: nodejs
         repo: "ppa:chris-lea/node.js"
 uwsgi-build-tools:
     apt: build-essential python-dev
@@ -22,3 +22,5 @@ pip:
     apt: python-pip
 nginx: 
     apt: nginx
+curl:
+    apt: curl

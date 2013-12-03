@@ -16,4 +16,4 @@ def load(settings):
         # Start the service - e.g. it's stopped on travis by default.
         sudo('/etc/init.d/mongodb start')
 
-    return set([Package('mongodb')]), [start]
+    return set([Package('mongodb'), Package('curl')]), [start]
