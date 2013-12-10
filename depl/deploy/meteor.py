@@ -1,8 +1,8 @@
 from StringIO import StringIO
 import textwrap
 
-from fabric.api import run, sudo, put
-from fabric.context_managers import quiet
+from fabric.api import sudo, put
+from fabric.context_managers import quiet, shell_env
 
 from . import Package
 from . import mongodb, _utils
@@ -14,17 +14,24 @@ APT_REPO = \
 def load(settings):
     def install():
         # remove a lot of output (orginally stderr) by removing the %
-        with quiet(''):
-            do_it = False
-            if run('test -d ~/.meteor').status_code == 1:
-                do_it = True
-        if do_it:
-            run('curl https://install.meteor.com | /bin/sh 2>&1 | grep -v "%"')
-            sudo('ln -f -s ~/.meteor/meteor /usr/local/bin/meteor')
+        meteor_path = '/var/www/.meteor'
+        with quiet():
+            install_meteor = False
+            if sudo('test -d %s' % meteor_path, user='www-data').failed:
+                install_meteor = True
+        if install_meteor:
+            # meteor installer needs access rights for $HOME
+            sudo('chown www-data:www-data /var/www/')
+            with shell_env(HOME='/var/www'):
+                sudo('curl https://install.meteor.com '
+                     '| sed "s/if sudo cp/if echo/g"'  # remove annoying sudo operation
+                     '| /bin/sh 2>&1 | grep -v "%"',
+                     user='www-data')
+            # link from /usr/local/bin/
+            sudo('ln -f -s %s/tools/latest/bin/meteor /usr/local/bin/meteor'
+                 % meteor_path)
 
-        sudo('service nginx restart')
-
-    def meteor_upstart(remote_path):
+    def meteor_upstart():
         # find a more general way - not upstart - look at comment in python
         # uwsgi upstart.
         auto_start = """
@@ -33,17 +40,15 @@ def load(settings):
         stop on runlevel [06]
         respawn
 
-        env UWSGI=%s
-        env LOGTO=/var/log/uwsgi/emperor.log
-
         script
             cd "%s"
             exec sudo -u www-data meteor
         end script
         """ % remote_path
+
         file = StringIO(textwrap.dedent(auto_start))
-        put(file, '/etc/init/meteor.conf', use_sudo=True)
-        sudo('service meteor start')
+        put(file, '/etc/init/depl_%s.conf' % settings['id'], use_sudo=True)
+        sudo('service depl_meteor restart')
 
     locations = {'/': """
         proxy_pass http://localhost:3000;
@@ -53,12 +58,14 @@ def load(settings):
         proxy_set_header Host $host;
     """}
     nginx_conf = _utils.nginx_config(settings, locations)
+    remote_path = '/var/www/depl_' + settings['id']
 
     dependencies, commands = mongodb.load(settings)
     commands += [
-        _utils.move_project_to_www('.', '~/'),
+        _utils.move_project_to_www('.', remote_path),
         install,
         meteor_upstart,
+        _utils.generate_ssl_keys(settings['id'], settings['ssl']),
         _utils.install_nginx(nginx_conf, settings['id']),
     ]
     return dependencies | set([Package('nodejs')]), commands

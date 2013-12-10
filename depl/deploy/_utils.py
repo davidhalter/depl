@@ -58,7 +58,7 @@ def nginx_config(settings, locations):
 
     http_port = settings['port']
     cfgs = (('http', http_port, '', settings['redirect'], ssl['port']),
-            ('https', '%s ssl' % ssl['port'], add_ssl, ssl['redirect'], http_port))
+            ('https', ssl['port'] and '%s ssl' % ssl['port'], add_ssl, ssl['redirect'], http_port))
     config_txt = ''
     for proto, port, add_config, redirect, other_port in cfgs:
         # if port is set to zero - disable it
@@ -86,7 +86,7 @@ def install_nginx(nginx_txt, id):
 
 @lazy
 def move_project_to_www(local_path, remote_path):
-    local_path = os.os.path.abspath(local_path)
+    local_path = os.path.abspath(local_path)
     sudo('mkdir /var/www || true')
     depl_tmp = '/var/www/tmp_depl'
     sudo('mkdir %s || true' % depl_tmp)
