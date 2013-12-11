@@ -60,12 +60,12 @@ def load(settings):
     nginx_conf = _utils.nginx_config(settings, locations)
     remote_path = '/var/www/depl_' + settings['id']
 
-    dependencies, commands = mongodb.load(settings)
-    commands += [
+    mongo_commands = mongodb.load(settings)
+    commands = (
         _utils.move_project_to_www('.', remote_path),
         install,
         meteor_upstart,
         _utils.generate_ssl_keys(settings['id'], settings['ssl']),
         _utils.install_nginx(nginx_conf, settings['id']),
-    ]
-    return dependencies | set([Package('nodejs')]), commands
+    )
+    return (Package('nodejs'),) + mongo_commands + commands

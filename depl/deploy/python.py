@@ -62,7 +62,7 @@ def load(settings):
         _utils.generate_ssl_keys(settings['id'], settings['ssl']),
         _utils.install_nginx(nginx_conf, settings['id']),
     ]
-    return set(Package(d) for d in ['pip', 'uwsgi-build-tools', 'nginx']), commands
+    return tuple(Package(d) for d in ['pip', 'uwsgi-build-tools', 'nginx']) + commands
 
 
 def _gen_uwsgi_file(wsgi_file, remote_path, socket):

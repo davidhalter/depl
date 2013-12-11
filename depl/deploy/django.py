@@ -78,9 +78,9 @@ def load(settings):
             sudo('service uwsgi restart')
             sudo('service nginx restart')
 
-    dependencies, commands = python.load(settings)
-    add_dep, add_commands = db_auto_detect(settings['id'], settings_module)
-    return dependencies | add_dep, add_commands + commands + [django_stuff]
+    commands = python.load(settings)
+    db_commands = db_auto_detect(settings['id'], settings_module)
+    return db_commands + commands + (django_stuff,)
 
 
 def db_auto_detect(django_id, settings_module):
@@ -120,8 +120,7 @@ def db_auto_detect(django_id, settings_module):
             return [], []
 
     commands = []
-    dependencies = set()
     for dependency, deploy_obj in get_deploys(json_str):
         commands += deploy.load(deploy_obj.name, deploy_obj.settings)
-        dependencies.add(dependency)
-    return dependencies, commands
+        commands.append(dependency)
+    return tuple(commands)
