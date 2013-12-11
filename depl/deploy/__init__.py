@@ -9,22 +9,40 @@ packages for your package manager.
 """
 
 import os
+import re
 from datetime import datetime
 
 import yaml
 from fabric.api import settings, run, sudo, warn_only
-from fabric.context_managers import quiet
+from fabric.context_managers import quiet, hide
 
 from depl import helpers
 
 
 def load(name, settings):
     """Returns an iterable of commands to execute - basically callbacks."""
+    def install_packages():
+        # only working for apt
+        with hide('stdout'):
+            apt_txt = run('cat /etc/apt/sources.list /etc/apt/sources.list.d/*.list')
+
+        force_update = False
+        for package in packages:
+            if package.needs_additional_repo(apt_txt):
+                package.install_additional_repo()
+                force_update = True
+
+        package_manager.run_update(force_update)
+
+        for package in packages:
+            package.install()
+
     module = __import__('depl.deploy.' + name, globals(), locals(), [name], -1)
     commands = module.load(settings)
     packages = set([p for p in commands if isinstance(p, Package)])
     commands = tuple([p for p in commands if not isinstance(p, Package)])
-    return (package_manager.run_update,) + tuple(packages) + commands
+
+    return (install_packages,) + commands
 
 
 def _apt_add_repo(repo, pgp=None, no_deb_src=False):
@@ -46,7 +64,6 @@ def _apt_add_repo(repo, pgp=None, no_deb_src=False):
 
     if pgp is not None:
         sudo('apt-key adv --keyserver keyserver.ubuntu.com --recv %s' % pgp)
-    package_manager.run_update(force=True)
 
 
 class Package(object):
@@ -57,6 +74,12 @@ class Package(object):
     def __init__(self, name):
         self.name = name
 
+        self._dep_string = dependencies[self.name][package_manager.system()]
+        self._properties = {}
+        if isinstance(self._dep_string, dict):
+            self._properties = self._dep_string
+            self._dep_string = self._dep_string['name']
+
     def __eq__(self, other):
         return isinstance(other, Package) and self.name == other.name
 
@@ -66,19 +89,26 @@ class Package(object):
     def __hash__(self):
         return hash(self.name)
 
-    def __call__(self):
-        """installation call"""
-        dep_string = dependencies[self.name][package_manager.system()]
-        if isinstance(dep_string, dict):
-            repo = dep_string['repo']
-            pgp = dep_string.get('pgp')
-            if package_manager.system() == 'apt':
-                _apt_add_repo(repo, pgp, dep_string.get('no-deb-src', False))
-            else:
-                raise NotImplementedError()
-            dep_string = dep_string['name']
+    def needs_additional_repo(self, sources_txt):
+        if 'repo' not in self._properties:
+            return False
 
-        package_manager.install(dep_string)
+        repo_search = self._properties['repo']
+        if repo_search.startswith('ppa:'):
+            repo_search = 'http://ppa.launchpad.net/' + repo_search[4:]
+        repo_search = re.escape(repo_search)
+        # only working for apt
+        return re.match('^deb %s\s*$' % repo_search, sources_txt) is None
+
+    def install_additional_repo(self):
+        if package_manager.system() == 'apt':
+            p = self._properties
+            _apt_add_repo(p['repo'], p.get('pgp'), p.get('no-deb-src', False))
+        else:
+            raise NotImplementedError()
+
+    def install(self):
+        package_manager.install(self._dep_string)
 
 
 class _PackageManager(object):
