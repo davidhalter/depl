@@ -13,9 +13,8 @@ def test_postgres_dependencies():
         pg.load(pg_settings)
 
     pg_settings = {'user': 'user', 'database': 'db', 'password': 'pw'}
-    dependencies, commands = pg.load(pg_settings)
-    assert dependencies == set([Package('postgresql')])
-    assert len(commands) == 1
+    commands = pg.load(pg_settings)
+    assert Package('postgresql') in commands
 
 
 def delete_pg_connection():

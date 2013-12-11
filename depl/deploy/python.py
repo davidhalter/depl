@@ -55,13 +55,13 @@ def load(settings):
         put(uwsgi_start_file, '/etc/init/uwsgi.conf', use_sudo=True)
         sudo('service uwsgi restart')
 
-    commands = [
+    commands = (
         _utils.move_project_to_www(local_path, remote_path),
         install_python,
         setup_uwsgi,
         _utils.generate_ssl_keys(settings['id'], settings['ssl']),
         _utils.install_nginx(nginx_conf, settings['id']),
-    ]
+    )
     return tuple(Package(d) for d in ['pip', 'uwsgi-build-tools', 'nginx']) + commands
 
 

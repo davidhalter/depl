@@ -21,8 +21,10 @@ from depl import helpers
 def load(name, settings):
     """Returns an iterable of commands to execute - basically callbacks."""
     module = __import__('depl.deploy.' + name, globals(), locals(), [name], -1)
-    module_dependencies, commands = module.load(settings)
-    return [package_manager.run_update] + list(module_dependencies) + commands
+    commands = module.load(settings)
+    packages = set([p for p in commands if isinstance(p, Package)])
+    commands = tuple([p for p in commands if not isinstance(p, Package)])
+    return (package_manager.run_update,) + tuple(packages) + commands
 
 
 def _apt_add_repo(repo, pgp=None, no_deb_src=False):
@@ -56,7 +58,7 @@ class Package(object):
         self.name = name
 
     def __eq__(self, other):
-        return self.name == other.name
+        return isinstance(other, Package) and self.name == other.name
 
     def __ne__(self, other):
         return not self.__eq__(other)
