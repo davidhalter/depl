@@ -24,7 +24,10 @@ def load(name, settings):
     def install_packages():
         # only working for apt
         with hide('stdout'):
-            apt_txt = run('cat /etc/apt/sources.list /etc/apt/sources.list.d/*.list')
+            # Need a new line after sources.list, which sometimes doesn't end
+            # with one, easiest option: awk.
+            apt_txt = run('awk \'FNR==1{print ""}1\' '
+                          '/etc/apt/sources.list /etc/apt/sources.list.d/*')
 
         force_update = False
         for package in packages:
@@ -93,12 +96,12 @@ class Package(object):
         if 'repo' not in self._properties:
             return False
 
+        # only working for apt
         repo_search = self._properties['repo']
         if repo_search.startswith('ppa:'):
-            repo_search = 'http://ppa.launchpad.net/' + repo_search[4:]
+            repo_search = 'deb http://ppa.launchpad.net/' + repo_search[4:]
         repo_search = re.escape(repo_search)
-        # only working for apt
-        return re.match('^deb %s\s*$' % repo_search, sources_txt) is None
+        return re.search('^%s' % repo_search, sources_txt, re.MULTILINE) is None
 
     def install_additional_repo(self):
         if package_manager.system() == 'apt':
