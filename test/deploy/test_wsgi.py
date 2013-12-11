@@ -17,7 +17,7 @@ def flask_depl(tmpdir):
 
 @config_file('''
     deploy:
-        - python:
+        - wsgi:
             port: 8888
             wsgi: hello:app
             ssl:
@@ -42,7 +42,7 @@ def test_flask_simple(tmpdir):
 
 @config_file('''
     deploy:
-        - python:
+        - wsgi:
             port: 8888
             wsgi: hello:app
             ssl:
@@ -62,7 +62,7 @@ def test_flask_redirect(tmpdir):
 
 @config_file('''
     deploy:
-        - python:
+        - wsgi:
             port: 0
             wsgi: hello:app
             ssl:

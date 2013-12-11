@@ -6,7 +6,7 @@ import re
 
 from depl import deploy
 from depl.deploy import Package
-from depl.deploy import python
+from depl.deploy import wsgi
 from depl.config import Deploy
 from fabric.api import cd, prefix, put, sudo, warn_only, local
 
@@ -36,7 +36,7 @@ def load(settings):
     settings['static'] = {'/static': 'depl_staticfiles'}
 
     # wsgi - use the right settings
-    wsgi_file = python.search_wsgi(settings)
+    wsgi_file = wsgi.search_wsgi(settings)
     depl_wsgi = textwrap.dedent("""
     import os
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "depl_settings")
@@ -78,7 +78,7 @@ def load(settings):
             sudo('service uwsgi restart')
             sudo('service nginx restart')
 
-    commands = python.load(settings)
+    commands = wsgi.load(settings)
     db_commands = db_auto_detect(settings['id'], settings_module)
     return db_commands + commands + (django_stuff,)
 

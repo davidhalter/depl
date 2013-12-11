@@ -1,6 +1,6 @@
 deploy:
-    - python:
-        id: python
+    - wsgi:
+        id: wsgi
         url: localhost
         port: 80  # 0 to disable
         redirect: null  # 'https' to redirect to the https port
