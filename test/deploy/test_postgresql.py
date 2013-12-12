@@ -2,7 +2,7 @@ import pytest
 
 from fabric.api import local as local
 
-from test_main import config_file, main_run
+from ..helpers import config_file, main_run
 from depl.deploy import postgresql as pg
 from depl.deploy import Package
 

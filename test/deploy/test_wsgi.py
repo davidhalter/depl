@@ -5,7 +5,7 @@ import requests
 from requests.exceptions import ConnectionError
 import pytest
 
-from test_main import config_file, move_dir_content, main_run
+from ..helpers import config_file, move_dir_content, main_run
 
 
 def flask_depl(tmpdir):

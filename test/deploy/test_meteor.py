@@ -3,7 +3,7 @@ import time
 
 import requests
 
-from test_main import config_file, move_dir_content, main_run
+from ..helpers import config_file, move_dir_content, main_run
 
 
 @config_file('''

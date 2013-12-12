@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-from test_main import config_file, main_run
+from ..helpers import config_file, main_run
 
 
 @config_file('''

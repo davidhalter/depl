@@ -3,7 +3,7 @@ from os.path import join, abspath, dirname
 from fabric.api import local
 import requests
 
-from test_main import config_file, main_run, move_dir_content
+from ..helpers import config_file, main_run, move_dir_content
 
 
 def delete_pg_connection():
