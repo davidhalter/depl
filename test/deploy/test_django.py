@@ -12,7 +12,7 @@ def delete_pg_connection():
 
 
 def copy_to_temp(tmpdir):
-    flask_path = join(dirname(abspath(__file__)), 'sample', 'django_test')
+    flask_path = join(dirname(abspath(__file__)), 'sample', 'django')
     move_dir_content(flask_path, str(tmpdir))
 
 
