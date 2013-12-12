@@ -9,7 +9,7 @@ from depl.deploy import _utils
 from . import Package
 
 
-def load(settings):
+def deploy(settings):
     remote_path = '/var/www/depl_' + settings['id']
     local_path = '.'
 

@@ -4,14 +4,13 @@ import textwrap
 from os.path import exists
 import re
 
-from depl import deploy
-from depl.deploy import Package
+from depl.deploy import Package, load_commands
 from depl.deploy import wsgi
 from depl.config import Deploy
 from fabric.api import cd, prefix, put, sudo, warn_only, local
 
 
-def load(settings):
+def deploy(settings):
     if not exists('manage.py'):
         raise LookupError('Django projects need a manage.py')
 
@@ -78,7 +77,7 @@ def load(settings):
             sudo('service depl_uwsgi restart')
             sudo('service nginx restart')
 
-    commands = wsgi.load(settings)
+    commands = wsgi.deploy(settings)
     db_commands = db_auto_detect(settings['id'], settings_module)
     return db_commands + commands + (django_stuff,)
 
@@ -121,6 +120,6 @@ def db_auto_detect(django_id, settings_module):
 
     commands = []
     for dependency, deploy_obj in get_deploys(json_str):
-        commands += deploy.load(deploy_obj.name, deploy_obj.settings)
+        commands += load_commands(deploy_obj.name, deploy_obj.settings)
         commands.append(dependency)
     return tuple(commands)

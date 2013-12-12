@@ -11,7 +11,7 @@ APT_REPO = \
     "deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen"
 
 
-def load(settings):
+def deploy(settings):
     def install():
         # remove a lot of output (orginally stderr) by removing the %
         meteor_path = '/var/www/.meteor'
@@ -60,7 +60,7 @@ def load(settings):
     nginx_conf = _utils.nginx_config(settings, locations)
     remote_path = '/var/www/depl_' + settings['id']
 
-    mongo_commands = mongodb.load(settings)
+    mongo_commands = mongodb.deploy(settings)
     commands = (
         _utils.move_project_to_www('.', remote_path),
         install,

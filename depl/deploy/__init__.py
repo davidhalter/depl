@@ -1,6 +1,6 @@
 """
 Deploys have the same name as in ``grammar.yml``, are stored as python modules
-in the ``deploy`` package. These need to contain a ``load()`` function that
+in the ``deploy`` package. These need to contain a ``deploy()`` function that
 returns a list of commands - either python functions (remember to use fabric!)
 - or strings that need to be executed, as well as a list of dependencies.
 

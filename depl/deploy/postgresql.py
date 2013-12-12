@@ -5,7 +5,7 @@ from fabric.api import sudo
 from . import Package
 
 
-def load(settings):
+def deploy(settings):
     for need in ['user', 'password', 'database']:
         if settings[need] is None:
             raise ValueError('You need to define a %s to deploy postgres.' % need)

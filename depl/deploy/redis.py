@@ -1,6 +1,6 @@
 from . import Package
 
 
-def load(settings):
+def deploy(settings):
     # redis dependency, no commands
     return Package('redis'),
