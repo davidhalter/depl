@@ -211,7 +211,12 @@ class Deploy(object):
     def __init__(self, name, settings):
         self.name = name
         self.settings = settings
-        self.id = self.settings['id']
+        if name in ('sh', 'fab'):
+            # sh and fab are very simple string only, just use the name as its
+            # id for now, maybe later switch to counting them.
+            self.id = name
+        else:
+            self.id = self.settings['id']
 
     def __repr__(self):
         return '<%s: %s (%s)>' % (type(self).__name__, self.name, self.id)

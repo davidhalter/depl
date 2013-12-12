@@ -1,6 +1,6 @@
 import pytest
 
-from fabric.api import local as local
+from fabric.api import local
 
 from ..helpers import config_file, main_run
 from depl.deploy import postgresql as pg
