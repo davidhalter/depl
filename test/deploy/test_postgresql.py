@@ -10,7 +10,7 @@ from depl.deploy import Package
 def test_postgres_dependencies():
     pg_settings = {'user': None, 'database': 'db', 'password': 'pw'}
     with pytest.raises(ValueError):
-        pg.load(pg_settings)
+        pg.deploy(pg_settings)
 
     pg_settings = {'user': 'user', 'database': 'db', 'password': 'pw'}
     commands = pg.deploy(pg_settings)
