@@ -52,8 +52,8 @@ def load(settings):
         sudo('chown -R www-data:www-data /var/log/uwsgi')
 
         put(uwsgi_file, '/etc/uwsgi/vassals/depl_%s.ini' % settings['id'], use_sudo=True)
-        put(uwsgi_start_file, '/etc/init/uwsgi.conf', use_sudo=True)
-        sudo('service uwsgi restart')
+        put(uwsgi_start_file, '/etc/init/depl_uwsgi.conf', use_sudo=True)
+        sudo('service depl_uwsgi restart')
 
     commands = (
         _utils.move_project_to_www(local_path, remote_path),

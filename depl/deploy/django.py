@@ -75,7 +75,7 @@ def load(settings):
 
             # Restart both uwsgi & nginx, they might need it. But in the future
             # we could order the commands better.
-            sudo('service uwsgi restart')
+            sudo('service depl_uwsgi restart')
             sudo('service nginx restart')
 
     commands = wsgi.load(settings)
