@@ -4,7 +4,7 @@ Deploying stuff is hard, managing nginx and postgres painful, why not the easy
 way?
 
 Usage:
-  depl deploy [-c=<file>] [-p=<file>] [<host>...]
+  depl (deploy|remove) [-c=<file>] [-p=<file>] [<host>...]
   depl run [-c=<file>] [-p=<file>] <command> [<host>...]
   depl -h | --help
 
@@ -37,5 +37,9 @@ def main():
     for pool in c.pools:
         if args['deploy']:
             hosts.execute_pool(pool, 'deploy')
+        elif args['remove']:
+            # no deploy tool has yet implemented that. To be discussed.
+            raise NotImplementedError()
+            hosts.execute_pool(pool, 'remove')
         elif args['run']:
             hosts.run_in_pool([args['<command>']])
