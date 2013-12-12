@@ -36,7 +36,8 @@ deploy:
         database: null
         user: null
         password: null
-    - sh: 'bash/sh/ksh commands, whatever the fabric shell is.'
+    - sh: '' # bash/sh/ksh commands, whatever the fabric shell is.
+    - fab: '' # fabric commands, basically python with the fabric api imported.
 
 hosts:
     - <user@example:port>:
