@@ -19,7 +19,7 @@ from fabric.context_managers import quiet, hide
 from depl import helpers
 
 
-def load(name, settings):
+def load_commands(name, settings, action='deploy'):
     """Returns an iterable of commands to execute - basically callbacks."""
     def install_packages():
         # only working for apt
@@ -41,7 +41,7 @@ def load(name, settings):
             package.install()
 
     module = __import__('depl.deploy.' + name, globals(), locals(), [name], -1)
-    commands = module.load(settings)
+    commands = getattr(module, action)(settings)
     packages = set([p for p in commands if isinstance(p, Package)])
     commands = tuple([p for p in commands if not isinstance(p, Package)])
 

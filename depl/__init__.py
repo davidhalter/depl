@@ -36,6 +36,6 @@ def main():
 
     for pool in c.pools:
         if args['deploy']:
-            hosts.deploy_pool(pool)
+            hosts.deploy_pool(pool, 'deploy')
         elif args['run']:
             hosts.run_in_pool([args['<command>']])
