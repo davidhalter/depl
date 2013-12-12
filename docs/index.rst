@@ -1,0 +1,35 @@
+depl - deploying is easy
+===================================================
+
+Release v\ |release|. (:doc:`Installation <docs/installation>`)
+
+.. automodule:: depl
+
+Autocompletion can look like this (e.g. VIM plugin):
+
+
+.. _toc:
+
+Docs
+----
+
+.. toctree::
+   :maxdepth: 2
+
+   docs/installation
+   docs/usage
+   docs/web-frameworks
+   docs/services
+   docs/plugin-api
+   docs/development
+
+
+.. _resources:
+
+Resources
+---------
+
+- `Source Code on Github <https://github.com/davidhalter/depl>`_
+- `Travis Testing <https://travis-ci.org/davidhalter/depl>`_
+- `Python Package Index <http://pypi.python.org/pypi/depl/>`_
+- `Test Coverage <https://coveralls.io/r/davidhalter/depl>`_
