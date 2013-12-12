@@ -6,7 +6,7 @@ from fabric import tasks
 from depl import deploy
 
 
-def deploy_pool(pool, action):
+def execute_pool(pool, action):
     commands = chain.from_iterable(
         deploy.load_commands(d.name, d.settings, action) for d in pool.deploy
     )

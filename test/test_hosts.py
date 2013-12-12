@@ -17,4 +17,4 @@ def test_deploy(monkeypatch):
 
     pool = config.Pool(None, [config.Host('localhost')],
                              [config.Deploy('redis', {'id': 'redis'})])
-    hosts.deploy_pool(pool, 'deploy')
+    hosts.execute_pool(pool, 'deploy')
