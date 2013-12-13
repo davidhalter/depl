@@ -40,6 +40,9 @@ You can run tests like this::
 
     tox
 
+The goal is to keep at least 90% testing coverage.
+
+
 Contributing
 ------------
 
