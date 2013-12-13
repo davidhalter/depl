@@ -1,5 +1,3 @@
-.. include:: ../global.rst
-
 The Plugin API
 ==============
 

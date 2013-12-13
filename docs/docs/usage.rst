@@ -3,6 +3,56 @@ Usage
 
 .. automodule:: depl
 
+Hosts / Pools
+-------------
+
+While it's possible to easily define hosts (so you don't always have to use
+them while using ``depl deploy myhost.com``)::
+
+    deploy:
+        - redis
+    hosts:
+        - myhost.com:
+            password: "the answer is 42"
+        - host_with_key.com  # it is always prefered to use keys.
+
+It's also possible to group hosts with pools::
+
+    deploy:
+        - postgresql
+        - django:
+            port: 8080
+    hosts:
+        - databases.com
+            password: "pg rocks"
+        - i_dont_like_long_urls.myhost.webservers.com
+            id: webservers
+
+    pools:
+        db:
+            deploy: [postgresql]
+            hosts: [databases.com]
+        web:
+            deploy: [django]
+            hosts: [webservers]
+
+I'm not sure if anybody is ever going to use that, though.
+
+
+Extend other depl modules
+-------------------------
+
+Just use the extends identifier::
+
+    deploy:
+        - redis
+    extends:
+        - foo.yml
+        - bar.yml
+
+Files are automatically merged - it works like multiple inheritance.
+
+
 Custom Scripts
 --------------
 
