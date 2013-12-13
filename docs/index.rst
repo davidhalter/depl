@@ -4,8 +4,6 @@ depl - deploying should be easy
 Release v\ |release|. (:doc:`Installation <docs/installation>`)
 
 
-.. automodule:: depl
-
 Autocompletion can look like this (e.g. VIM plugin):
 
 
