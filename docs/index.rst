@@ -1,3 +1,5 @@
+.. include:: global.rst
+
 depl - deploying should be easy
 ===============================
 
