@@ -12,11 +12,9 @@ Code Guidelines
 Pull Requests
 -------------
 
-Pull Requests are great (on the **dev** branch)! Readme/Documentation changes
-are ok in the master branch.
+We love Pull Requests!
 
  1. Fork the Repo on github.
  2. If you are adding functionality or fixing a bug, please add a test!
  3. Add your name to AUTHORS.txt
- 4. Push to your fork and submit a **pull request to the dev branch**.
-
+ 4. Push to your fork and submit a **pull request**.

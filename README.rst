@@ -49,12 +49,14 @@ Why do we need another deploy tool?
 Read `this article I wrote <article>`_!
 
 
-What depl does not
-------------------
+What depl does not, yet.
+------------------------
 
 - No DNS configuration
-- No central logging (yet?)
+- No central logging
+- No High Availability tools like HAProxy
 
+A lot of web-frameworks and tools have yet to be supported.
 
 Support
 -------
@@ -71,32 +73,27 @@ Python 3 support will be ready once fabric_ supports Python 3.
 Additional Ideas
 ----------------
 
-- Add support for automatic travis conversions.
-
-.. _article: http://jedidjah.ch/code/2013/10/
-.. _fabric: https://github.com/fabric/fabric
-
+- Could generate e.g. an ansible_ recipe with depl. Possible?
+- Write a "depl server" with different backends (e.g. amazon clouds) to
+  automate the process of deploying and increasing servers.
+- Add support for automatic travis testing with depl files. Is that even
+  possible?
 
 Contributing
 ------------
 
-Read `CONTRIBUTING.md 
-<https://github.com/davidhalter/jedi/blob/master/CONTRIBUTING.md>`_!
+Read `CONTRIBUTING.md
+<https://github.com/davidhalter/jedi/blob/master/CONTRIBUTING.md>`_ to see how
+you can contribute! There's also a small developer documentation `available
+<depl.readthedocs.org/en/latest/docs/development.html#testing>`_.
 
 
 Testing
 -------
 
-Testing ``depl`` correctly involves a lot of integration testing. Therefore I
-recommend you to use a virtual machine for testing. Alternatively you can just
-create a pull request, which travis automatically tests.
+Use a virtual machine for testing, please. `Why?
+<depl.readthedocs.org/en/latest/docs/development.html#testing>`_
 
-``depl`` will open a lot of ports and testing might even create security holes
-on your computer - so really - use a VM.
-
-You can run tests like this::
-
-    sudo pip install tox
-    sudo aptitude install libpq-dev python-dev
-
-    tox
+.. _article: http://jedidjah.ch/code/2013/10/
+.. _ansible: https://github.com/ansible/ansible
+.. _fabric: https://github.com/fabric/fabric
