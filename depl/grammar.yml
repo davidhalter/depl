@@ -7,14 +7,14 @@ deploy:
         wsgi: null
         ssl: &ssl
             port: 443  # to disable
-            redirect: null  # 'https' to redirect to the https port
+            redirect: null  # 'http' to redirect to the http port
             certificate: null  # a file path
             key: null  # a file path
     - django:
         id: django
         settings: null  # depl searches it automatically - typically project.settings
         url: localhost
-        redirect: null  # 'https' to redirect to the https port
+        redirect: null  # 'http' to redirect to the http port
         admin:
             user: null
             email: null
@@ -25,7 +25,7 @@ deploy:
         id: meteor
         url: localhost
         port: 80  # 0 to disable
-        redirect: null  # 'https' to redirect to the https port
+        redirect: null  # 'http' to redirect to the http port
         ssl: *ssl
     - redis:
         id: redis
