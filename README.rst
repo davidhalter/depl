@@ -1,5 +1,5 @@
-depl - deploy easy and fast.
-============================
+depl - deploying should be easy
+===============================
 
 .. image:: https://secure.travis-ci.org/davidhalter/depl.png?branch=master
     :target: http://travis-ci.org/davidhalter/depl
@@ -17,13 +17,6 @@ depl - deploy easy and fast.
     :target: https://crate.io/packages/depl/
     :alt: Latest PyPI version
 
-
-**Please don't use this yet, it's in a planning phase.** Pretty soon I'm going
-to start a discussion about it. Everything here is incomplete. The only reason
-I'm already deploying is that I'm trying to prepare myself for a major
-discussion about Python web deployment and deployment in general.
-
--------------------------------------------------------------------------------
 
 Deploying is easy! For example create a ``depl.yml`` file in your Django
 project:

@@ -1,7 +1,8 @@
-depl - deploying is easy
-===================================================
+depl - deploying should be easy
+===============================
 
 Release v\ |release|. (:doc:`Installation <docs/installation>`)
+
 
 .. automodule:: depl
 
