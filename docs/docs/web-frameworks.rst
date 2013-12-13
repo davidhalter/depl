@@ -1,11 +1,13 @@
+.. include:: ../global.rst
+
 Web Frameworks
 ==============
 
-Currently we support the following modules:
+Currently we support the following frameworks/languages:
 
 - :ref:`Django <django>`
 - :ref:`Meteor <meteor>`
-- :ref:`WSGI & Flask & others... <wsgi>`
+- :ref:`Python WSGI & Flask & others... <wsgi>`
 
 Support for Rails, Java, Scala  and whatever else is hopefully coming soon! We
 need experts, to tell us at least which tools we should use to deploy. So if
@@ -71,11 +73,7 @@ Meteor
 
 .. _wsgi:
 
-WSGI & Flask & others...
-------------------------
+Python WSGI & Flask & others...
+-------------------------------
 
 .. automodule:: depl.deploy.wsgi
-
-
-.. _issue: https://github.com/davidhalter/depl/issues
-.. _grammar: https://github.com/davidhalter/depl/blob/master/depl/grammar.yml
