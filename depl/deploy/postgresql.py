@@ -3,7 +3,7 @@ PostgreSQL is basically just driven by a database/user/password configuration.
 Everything else (replication, ports, etc) is not available, yet. For most web
 applications though, this is enough. You can also specify multiple databases.
 
-.. sourcecode: yaml
+.. sourcecode:: yaml
 
     deploy:
         - postgresql

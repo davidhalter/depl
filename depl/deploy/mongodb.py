@@ -2,7 +2,7 @@
 MongoDB is very easy to setup. There are no configuration options, just mention
 it:
 
-.. sourcecode: yaml
+.. sourcecode:: yaml
 
     deploy:
         - mongodb
