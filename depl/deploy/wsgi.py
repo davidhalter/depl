@@ -1,3 +1,13 @@
+"""
+The only additional option for wsgi is ``wsgi``:
+
+.. sourcecode:: yaml
+
+    deploy:
+        - wsgi:
+            wsgi: foo:bar
+            port: 8080
+"""
 import os
 from StringIO import StringIO
 import textwrap
