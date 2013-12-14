@@ -12,14 +12,13 @@ deploy:
             key: null  # a file path
     - django:
         id: django
-        settings: null  # depl searches it automatically - typically project.settings
         url: localhost
         redirect: null  # 'http' to redirect to the http port
+        port: 80
+        settings: null  # depl searches it automatically - typically project.settings
         admin:
             user: null
             email: null
-        port: 80
-        wsgi: null # project/wsgi.py will be searched.
         ssl: *ssl
     - meteor:
         id: meteor

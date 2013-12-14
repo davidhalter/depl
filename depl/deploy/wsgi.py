@@ -126,7 +126,7 @@ def _gen_uwsgi_start_file(remote_path):
 
 
 def search_wsgi(settings):
-    wsgi_path = settings['wsgi']
+    wsgi_path = settings.get('wsgi')
     if wsgi_path is None:
         # search for a file in the project named "wsgi"
         for root, dirnames, filenames in os.walk('.'):
