@@ -5,6 +5,8 @@ depl - deploying should be easy
 
 Release v\ |release|. (:doc:`Installation <docs/installation>`)
 
+Deploying stuff is hard, managing nginx and postgres painful, why not the easy
+way?
 
 Autocompletion can look like this (e.g. VIM plugin):
 

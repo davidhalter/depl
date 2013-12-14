@@ -1,7 +1,9 @@
 """
-depl - deploy easy and fast.
-Deploying stuff is hard, managing nginx and postgres painful, why not the easy
-way?
+depl - deploying should be easy.
+
+Just create a `depl.yml` file in your project folder and specify your deploy
+options. For more help how to create one, goto `depl.rtfd.org`. After that you
+say `depl deploy` and you're done!
 
 Usage:
   depl (deploy|remove) [-c=<file>] [-p=<file>] [<host>...]

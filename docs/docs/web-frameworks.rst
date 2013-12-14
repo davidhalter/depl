@@ -1,5 +1,7 @@
 .. include:: ../global.rst
 
+.. _web-frameworks:
+
 Web Frameworks
 ==============
 

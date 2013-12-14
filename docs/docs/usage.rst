@@ -1,7 +1,7 @@
 Usage
 =====
 
-.. automodule:: depl
+The most important thing in your 
 
 Hosts / Pools
 -------------
