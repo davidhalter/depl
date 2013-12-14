@@ -20,6 +20,8 @@ If you don't need an admin super user, you can just deploy it like this:
 
     deploy:
         - django
+
+Django is driven by uwsgi.
 """
 import json
 from StringIO import StringIO

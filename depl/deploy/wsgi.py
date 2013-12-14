@@ -7,6 +7,8 @@ The only additional option for wsgi is ``wsgi``:
         - wsgi:
             wsgi: foo:bar
             port: 8080
+
+WSGI plugins are driven by uwsgi.
 """
 import os
 from StringIO import StringIO

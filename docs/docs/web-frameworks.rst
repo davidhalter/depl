@@ -20,6 +20,10 @@ discussion!
 General Web Options & SSL
 -------------------------
 
+All are web frameworks (at least until now) are using nginx as a reverse proxy.
+This makes it possible to use a multitude of ports and frameworks on the same
+server.
+
 There's a general set of web options, basically every web host has these
 options (read the grammar_ file!!!):
     
