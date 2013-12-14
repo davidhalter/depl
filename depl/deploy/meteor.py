@@ -1,3 +1,15 @@
+"""
+To deploy meteor, just use something like:
+
+.. sourcecode:: yaml
+
+    deploy:
+        - meteor:
+            port: 8080
+
+There are no additional options to the :ref:`general web options
+<general-web>`.
+"""
 from StringIO import StringIO
 import textwrap
 
