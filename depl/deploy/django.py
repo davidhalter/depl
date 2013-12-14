@@ -1,3 +1,26 @@
+"""
+Django supports the following additional options:
+
+.. sourcecode:: yaml
+
+    deploy:
+        - django:
+            settings: project.settings  # depl searches automatically
+            admin:
+                user: null
+                email: null
+
+Note that the admin interface doesn't yet allow you to specify a password. A
+`pull request <https://github.com/fabric/fabric/pull/1021>`_ for fabric is
+pending. Until that you have to enter your password manually.
+
+If you don't need an admin super user, you can just deploy it like this:
+
+.. sourcecode:: yaml
+
+    deploy:
+        - django
+"""
 import json
 from StringIO import StringIO
 import textwrap
