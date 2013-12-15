@@ -18,29 +18,7 @@ depl - deploying should be easy
     :alt: Latest PyPI version
 
 
-Deploying is easy! For example create a ``depl.yml`` file in your Django
-project:
-
-.. code:: yaml
-
-    deploy:
-        - django:  # you don't need the next lines, it does that automatically.
-            url: subdomain.example.com
-            after_script: echo "done!"
-        - postgresql
-        - reddis
-
-And deploy to two different servers:
-
-.. code:: bash
-
-   depl deploy foo@example.com bar@example2.com
-
-
-At the moment there are not a lot of configuration options, but the goal is to
-make it possible to choose between different products (e.g.
-``gunicorn``/``uwsgi`` or ``nginx``/``apache``). Support for different
-languages/frameworks is also planned (``php``, ``ruby``, ``rails``, etc.).
+**DON'T LOOK DON'T PUBLISH. please don't!**
 
 
 Why do we need another deploy tool?
