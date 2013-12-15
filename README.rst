@@ -27,15 +27,6 @@ Why do we need another deploy tool?
 Read `this article I wrote <article>`_!
 
 
-What depl does not, yet.
-------------------------
-
-- No DNS configuration
-- No central logging
-- No High Availability tools like HAProxy
-
-A lot of web-frameworks and tools have yet to be supported.
-
 Support
 -------
 
@@ -51,6 +42,10 @@ Python 3 support will be ready once fabric_ supports Python 3.
 Additional Ideas
 ----------------
 
+- DNS configuration
+- Central logging
+- High Availability tools like HAProxy to make it easy not to go offline for a
+  few seconds while deploying.
 - Could generate e.g. an ansible_ recipe with depl. Possible?
 - Write a "depl server" with different backends (e.g. amazon clouds) to
   automate the process of deploying and increasing servers.
