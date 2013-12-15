@@ -40,8 +40,16 @@ settings.
 
 Currently this is also working for `Meteor
 <depl.readthedocs.org/en/latest/docs/web-frameworks.html#meteor>`_ and 
-`WSGI <depl.readthedocs.org/en/latest/docs/development.html#testing>_` (which
+`WSGI <depl.readthedocs.org/en/latest/docs/development.html#testing>`_ (which
 includes flask).
+
+Blog Posts talking about depl
+-----------------------------
+
+- `Why do we need another deploy tool <article>`_!
+
+If you want to know more in general, just read the documentation at
+`<http://depl.rtfd.org>`_!
 
 
 .. _toc:

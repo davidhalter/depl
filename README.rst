@@ -20,11 +20,11 @@ depl - deploying should be easy
 
 **DON'T LOOK DON'T PUBLISH. please don't!**
 
+Documentation
+-------------
 
-Why do we need another deploy tool?
------------------------------------
-
-Read `this article I wrote <article>`_!
+If you want to know more in general, just read the documentation at
+`<http://depl.rtfd.org>`_!
 
 
 Support
