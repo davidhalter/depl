@@ -1,5 +1,7 @@
 .. include:: ../global.rst
 
+.. _services:
+
 Services
 ========
 
