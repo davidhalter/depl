@@ -6,9 +6,10 @@ depl - deploying should be easy
 Release v\ |release|. (:doc:`Installation <docs/installation>`)
 
 ``depl`` is a pre-alpha prototype. **We want to start a discussion about how
-developers deploy. How can we improve the current situation?** Please tell us
-why you think depl is not the right tool for you! Tell us what you think needs
-to be changed! We hope to make small and medium deployments easy.
+developers deploy.** Please tell us why you think depl is not the right tool
+for you! 
+
+----------
 
 Deploying stuff is hard, managing nginx and postgres painful. Why don't we
 solve that problem? Simple deployments should not involve tweaking
