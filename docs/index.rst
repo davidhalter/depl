@@ -6,14 +6,13 @@ depl - deploying should be easy
 Release v\ |release|. (:doc:`Installation <docs/installation>`)
 
 ``depl`` is a pre-alpha prototype. **We want to start a discussion about how
-developers deploy. How can we improve the current situation?** What is even
-wrong? Please tell us why you think depl is not the right tool for you! Tell us
-what you think needs to be changed! We hope to make small and medium
-deployments easy.
+developers deploy. How can we improve the current situation?** Please tell us
+why you think depl is not the right tool for you! Tell us what you think needs
+to be changed! We hope to make small and medium deployments easy.
 
-Deploying stuff is hard, managing nginx and postgres painful, why don't we
+Deploying stuff is hard, managing nginx and postgres painful. Why don't we
 solve that problem? Simple deployments should not involve tweaking
-configurations, that you have never dealt with before. ``depl`` solves this.
+configurations that you have never dealt with before. ``depl`` solves this.
 
 Let's `deploy Django
 <depl.readthedocs.org/en/latest/docs/web-frameworks.html#meteor>`_ to a live
@@ -33,11 +32,11 @@ your website will be running on ``https://myhost.com`` and
 ``http://myhost.com``. It only works on Ubuntu servers for now (maybe also
 Debian), but will work on other systems in the future as well.
 
-This will connect to ``myhost.com`` by SSH, install all necessary software
-packages and initialize your project. For the Django example this would involve
+``depl`` would connect to ``myhost.com`` by SSH, install all necessary software
+packages and initialize your project. In our Django example this would involve
 installing ``nginx``, ``uwsgi``, ``postgresql`` (if required by Django's
-``settings.py``), install all Python dependencies and run on your production
-settings.
+``settings.py``). It would install all Python dependencies and run on your
+production settings.
 
 Currently this is also working for `Meteor
 <depl.readthedocs.org/en/latest/docs/web-frameworks.html#meteor>`_ and 
