@@ -30,13 +30,14 @@ If you want to know more in general, just read the documentation at
 Support
 -------
 
-Current supports Ubuntu/Debian (apt-get), others:
+Currently depl supports Ubuntu/Debian (apt-get), the others:
 
 - Arch Linux (pacman) could be implemented
 - Fedora/CentOS/RHEL (rpm) could be implemented
 - Windows/Apple: Discussions needed (but probably not?!).
 
-Python 3 support will be ready once fabric_ supports Python 3.
+Depl is written in Python. Python 3 support will be ready once fabric_ supports
+Python 3.
 
 
 Additional Ideas
@@ -56,8 +57,8 @@ Contributing
 ------------
 
 Read `CONTRIBUTING.md
-<https://github.com/davidhalter/jedi/blob/master/CONTRIBUTING.md>`_ to see how
-you can contribute! There's also a small developer documentation `available
+<https://github.com/davidhalter/jedi/blob/master/CONTRIBUTING.md>`_ to check
+how you can contribute! There's also a small developer documentation `available
 <depl.readthedocs.org/en/latest/docs/development.html#testing>`_.
 
 
