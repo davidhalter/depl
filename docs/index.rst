@@ -15,11 +15,12 @@ Deploying stuff is hard, managing nginx and postgres painful, why don't we
 solve that problem? Simple deployments should not involve tweaking
 configurations, that you have never dealt with before. ``depl`` solves this.
 
-Let's deploy Django to a live server! Create a file called ``depl.yml``::
+Let's `deploy Django
+<depl.readthedocs.org/en/latest/docs/web-frameworks.html#meteor>`_ to a live
+server! Create a file called ``depl.yml``::
     
     deploy:
         - django:
-            port: 0  # 0 to disable
             settings: settings_prod
             ssl:
                 key: /path/to/key
@@ -28,9 +29,9 @@ Let's deploy Django to a live server! Create a file called ``depl.yml``::
         - myhost.com
 
 And run ``depl deploy`` in that same directory. After this two step process
-your website will be running on ``https://myhost.com``. It only works on Ubuntu
-servers for now (maybe also Debian), but will work on other systems in the
-future as well.
+your website will be running on ``https://myhost.com`` and
+``http://myhost.com``. It only works on Ubuntu servers for now (maybe also
+Debian), but will work on other systems in the future as well.
 
 This will connect to ``myhost.com`` by SSH, install all necessary software
 packages and initialize your project. For the Django example this would involve
@@ -46,10 +47,10 @@ includes flask).
 Blog Posts talking about depl
 -----------------------------
 
-- `Why do we need another deploy tool <article>`_!
-
-If you want to know more in general, just read the documentation at
-`<http://depl.rtfd.org>`_!
+- `The current state of deploying Django applications
+  <http://jedidjah.ch/code/2013/12/16/django-deployment/>`_!
+- `Platform as a Service: A Market Analysis
+  <http://jedidjah.ch/code/2013/12/16/paas/>`_!
 
 
 .. _toc:
