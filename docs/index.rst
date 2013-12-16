@@ -44,6 +44,19 @@ Currently this is also working for `Meteor
 `WSGI <depl.readthedocs.org/en/latest/docs/development.html#testing>`_ (which
 includes flask).
 
+Why depl and not ansible, puppet, chef, docker or vagrant?
+----------------------------------------------------------
+
+Have you ever tried those tools? ansible, puppet and chef are really
+complicated to understand. They are made for big deployments, for large scale
+operation engineers. You can read the blog posts below, they explain a bit
+more. Generally depl solves the use case for all small deployments on your own
+server, those tools do something different.
+
+Docker and Vagrant are completely different tools. They make controlling VMs
+easy. They do not install your software. However, depl could be used in
+combination with either of them.
+
 Blog Posts talking about depl
 -----------------------------
 
