@@ -26,8 +26,8 @@ def load_commands(name, settings, action='deploy'):
         with hide('stdout'):
             # Need a new line after sources.list, which sometimes doesn't end
             # with one, easiest option: awk.
-            apt_txt = run('awk \'FNR==1{print ""}1\' '
-                          '/etc/apt/sources.list /etc/apt/sources.list.d/*')
+            apt_txt = run('find /etc/apt/sources.list{,.d} -type f '
+                          '-exec awk \'FNR==1{print ""}1\' {} \;')
 
         force_update = False
         for package in packages:
