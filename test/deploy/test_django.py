@@ -69,3 +69,15 @@ def test_django_pg(tmpdir):
     ''')
 def test_pg_auto_detection(tmpdir):
     django_pg_test(tmpdir)
+
+
+@config_file('''
+    deploy:
+        - django:
+            port: 8887
+            path: nested/
+    ''')
+def test_django_nested(tmpdir):
+    copy_to_temp(tmpdir)
+    main_run(['depl', 'deploy', 'localhost'])
+    assert requests.get("http://localhost:8887/").text == "django rocks\n"
