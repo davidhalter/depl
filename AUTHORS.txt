@@ -6,5 +6,6 @@ David Halter (@davidhalter) <davidhalter88@gmail.com>
 Code Contributors
 =================
 
-
 Note: (@user) means a github user name.
+
+Danilo Bargen (@dbrgn) <github@dbrgn.ch>
