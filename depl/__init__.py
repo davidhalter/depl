@@ -30,10 +30,10 @@ def main():
     try:
         c = config.Config(args['--config'], args['<host>'], args['--pool'])
     except IOError:
-        sys.stderr.write("Couldn't find config file.")
+        sys.stderr.write("Couldn't find depl config file ({0}).\n".format(args['--config']))
         sys.exit(1)
     except config.ValidationError as e:
-        sys.stderr.write("Config file is invalid: " + e.message)
+        sys.stderr.write("Config file is invalid: {0}\n".format(e.message))
         sys.exit(2)
 
     for pool in c.pools:
