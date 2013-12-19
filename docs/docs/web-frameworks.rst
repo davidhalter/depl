@@ -35,6 +35,7 @@ options (read the grammar_ file!!!):
         - meteor:
             url: localhost
             port: 80  # 0 to disable
+            path: .
             redirect: null  # 'https' to redirect to the https port
 
             ssl:
@@ -47,7 +48,6 @@ As you can see, there's a way to play with the ports and specify an url (to
 host multiple domains on the same server). There's also a way to specify an ssl
 key/certificate. By default if not specified, depl generates self-signed
 certificates for you (obviously only working with a warning in the browser).
-This makes it possible 
 
 A typical django ssl configuration with ssh might look like this:
 
@@ -59,6 +59,8 @@ A typical django ssl configuration with ssh might look like this:
             ssl:
                 certificate: ~/.private/ssl/cert.crt
                 key: ~/.private/ssl/ssl.key
+
+Specifying the ``path`` allows a different source and project directory.
 
 
 .. _django:
