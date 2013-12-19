@@ -12,8 +12,8 @@ def delete_pg_connection():
 
 
 def copy_to_temp(tmpdir):
-    flask_path = join(dirname(abspath(__file__)), 'sample', 'django')
-    move_dir_content(flask_path, str(tmpdir))
+    django_path = join(dirname(abspath(__file__)), 'sample', 'django')
+    move_dir_content(django_path, str(tmpdir))
 
 
 def django_basic_test(tmpdir):
@@ -78,6 +78,7 @@ def test_pg_auto_detection(tmpdir):
             path: nested/
     ''')
 def test_django_nested(tmpdir):
-    copy_to_temp(tmpdir)
+    django_path = join(dirname(abspath(__file__)), 'sample', 'django_nested')
+    move_dir_content(django_path, str(tmpdir))
     main_run(['depl', 'deploy', 'localhost'])
     assert requests.get("http://localhost:8887/").text == "django rocks\n"

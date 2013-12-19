@@ -74,7 +74,7 @@ def deploy(settings):
 
     mongo_commands = mongodb.deploy(settings)
     commands = (
-        _utils.move_project_to_www('.', remote_path),
+        _utils.move_project_to_www(settings['path'], remote_path),
         install,
         meteor_upstart,
         _utils.generate_ssl_keys(settings['id'], settings['ssl']),

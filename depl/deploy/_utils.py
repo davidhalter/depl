@@ -86,6 +86,8 @@ def install_nginx(nginx_txt, id):
 
 @lazy
 def move_project_to_www(local_path, remote_path):
+    if not os.path.isdir(local_path):
+        raise ValueError('"%s" is not a directory.' % local_path)
     local_path = os.path.abspath(local_path)
     sudo('mkdir /var/www || true')
     depl_tmp = '/var/www/tmp_depl'

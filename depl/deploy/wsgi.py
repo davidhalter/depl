@@ -23,12 +23,18 @@ from . import Package
 
 def deploy(settings):
     remote_path = '/var/www/depl_' + settings['id']
-    local_path = '.'
+    local_path = settings['path']
+    move_requirements = False
 
     # python projects should always have a 'requirements.txt'.
     if not os.path.exists(os.path.join(local_path, 'requirements.txt')):
-        raise LookupError("requirements.txt doesn't exist in your Python project (%s)."
-                          % local_path)
+        if os.path.exists(os.path.join('.', 'requirements.txt')):
+            # requirements is in base folder, not in source folder, happens
+            # only in nested django projects.
+            move_requirements = True
+        else:
+            raise LookupError("requirements.txt doesn't exist in your Python project (%s)."
+                              % local_path)
 
     # configure nginx
     socket = remote_path + '/uwsgi.sock'
@@ -48,6 +54,8 @@ def deploy(settings):
 
     def install_python():
         sudo('pip -q install virtualenv')
+        if move_requirements:
+            put('requirements.txt', remote_path, use_sudo=True)
         with cd(remote_path):
             sudo('ls venv || virtualenv venv', user='www-data')
             with prefix('source venv/bin/activate'):

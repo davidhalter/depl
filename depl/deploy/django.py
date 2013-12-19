@@ -21,7 +21,8 @@ If you don't need an admin super user, you can just deploy it like this:
     deploy:
         - django
 
-Django is driven by uwsgi.
+Django is internally implemented by using the :ref:`WSGI <wsgi>` toolset, which
+uses uwsgi.
 """
 import json
 from StringIO import StringIO
