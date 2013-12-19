@@ -27,7 +27,7 @@ uses uwsgi.
 import json
 from StringIO import StringIO
 import textwrap
-from os.path import exists
+from os.path import exists, join
 import re
 
 from depl.deploy import Package, load_commands
@@ -37,13 +37,14 @@ from fabric.api import cd, prefix, put, sudo, warn_only, local
 
 
 def deploy(settings):
-    if not exists('manage.py'):
+    manage_path = join(settings['path'], 'manage.py')
+    if not exists(manage_path):
         raise LookupError('Django projects need a manage.py')
 
     # settings
     settings_module = settings['settings']
     if settings_module is None:
-        with open('manage.py') as f:
+        with open(manage_path) as f:
             m = re.search('''["']DJANGO_SETTINGS_MODULE['"], ["']([\d\w_.]+)["']''',
                           f.read())
             if not m:
@@ -142,10 +143,11 @@ def db_auto_detect(django_id, settings_module):
                          'print(json.dumps(DATABASES))"' % settings_module,
                          capture=True)
         if json_str.failed:
-            return [], []
+            return ()
 
     commands = []
     for dependency, deploy_obj in get_deploys(json_str):
-        commands += load_commands(deploy_obj.name, deploy_obj.settings)
-        commands.append(dependency)
+        if deploy_obj:
+            commands += load_commands(deploy_obj.name, deploy_obj.settings)
+            commands.append(dependency)
     return tuple(commands)
