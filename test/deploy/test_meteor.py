@@ -21,5 +21,5 @@ def test_simple(tmpdir):
     # http request on hosts with preinstalled meteor only works after a timeout
     # of some seconds - probably some weird restart issue (most probably meteor
     # itself).
-    time.sleep(5)
+    time.sleep(10)
     assert requests.get("http://localhost:8880/").status_code == 200
