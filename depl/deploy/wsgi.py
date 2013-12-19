@@ -139,11 +139,14 @@ def search_wsgi(settings):
     wsgi_path = settings.get('wsgi')
     if wsgi_path is None:
         # search for a file in the project named "wsgi"
-        for root, dirnames, filenames in os.walk('.'):
+        for root, dirnames, filenames in os.walk(settings['path']):
+            # don't search hidden folders
             if root == '.' or not os.path.basename(root).startswith('.'):
                 for filename in filenames:
                     if filename == 'wsgi.py':
-                        p = os.path.join(root, filename)[2:-3]
+                        # remove paths around it.
+                        local_path = os.path.relpath(settings['path']) + '/'
+                        p = os.path.join(root, filename)[len(local_path):-3]
                         wsgi_path = p.replace(os.path.sep, '.')
                         break
                 if wsgi_path:

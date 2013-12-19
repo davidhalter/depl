@@ -37,7 +37,8 @@ from fabric.api import cd, prefix, put, sudo, warn_only, local
 
 
 def deploy(settings):
-    manage_path = join(settings['path'], 'manage.py')
+    local_path = settings['path']
+    manage_path = join(local_path, 'manage.py')
     if not exists(manage_path):
         raise LookupError('Django projects need a manage.py')
 
@@ -105,11 +106,11 @@ def deploy(settings):
             sudo('service nginx restart')
 
     commands = wsgi.deploy(settings)
-    db_commands = db_auto_detect(settings['id'], settings_module)
+    db_commands = db_auto_detect(settings['id'], settings_module, local_path)
     return db_commands + commands + (django_stuff,)
 
 
-def db_auto_detect(django_id, settings_module):
+def db_auto_detect(django_id, settings_module, local_path):
     def get_deploys(json_str):
         count = 0
         for name, db_settings in json.loads(json_str).items():
@@ -118,8 +119,6 @@ def db_auto_detect(django_id, settings_module):
                 # for now only postgresql is supported
                 continue
 
-            if db_settings['HOST']:
-                db_settings['HOST']
             if db_settings['HOST'] not in ['localhost', '127.0.0.1', '']:
                 # only localhost autodetection allowed (everything else doesn't
                 # make sense)
@@ -138,9 +137,10 @@ def db_auto_detect(django_id, settings_module):
             count += 1
 
     with warn_only():
-        json_str = local('python -c "import json;'
-                         'from %s import *;'
-                         'print(json.dumps(DATABASES))"' % settings_module,
+        json_str = local('chdir %s; python -c "'
+                         'import json; from %s import *;'
+                         'print(json.dumps(DATABASES))"'
+                         % (local_path, settings_module),
                          capture=True)
         if json_str.failed:
             return ()
