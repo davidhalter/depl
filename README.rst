@@ -9,11 +9,11 @@ depl - deploying should be easy
     :target: https://coveralls.io/r/davidhalter/depl
     :alt: Coverage Status
 
-.. image:: https://pypip.in/d/depl/badge.png
+.. image:: https://img.shields.io/pypi/dm/depl.svg
     :target: https://crate.io/packages/depl/
     :alt: Number of PyPI downloads
 
-.. image:: https://pypip.in/v/depl/badge.png
+.. image:: https://img.shields.io/pypi/v/depl.svg
     :target: https://crate.io/packages/depl/
     :alt: Latest PyPI version
 
